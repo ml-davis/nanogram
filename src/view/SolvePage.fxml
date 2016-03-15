@@ -1,0 +1,13 @@
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane>
+    <VBox spacing="10">
+        <padding>
+            <Insets top="25" right="75" bottom="25" left="75"/>
+        </padding>
+        <Text id="title" text="Solve the puzzle"/>
+    </VBox>
+</AnchorPane>

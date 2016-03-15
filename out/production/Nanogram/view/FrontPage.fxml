@@ -1,0 +1,23 @@
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane>
+    <VBox spacing="10">
+        <padding>
+            <Insets top="75" right="75" bottom="75" left="75"/>
+        </padding>
+        <Text id="title" text="Puzzle Solver"/>
+
+        <TextFlow>
+            <children>
+                <Text text="&#10;Nanograms, also known as Hanjie, Picross, or Griddlers, are picture logic&#10;"/>
+                <Text text="puzzles in which cells in a grid must be colored or left blank according to&#10;"/>
+                <Text text="numbers at the side of the grid to reveal a hidden picture.&#10;&#10;"/>
+                <Text text="Choose if you would like to solve or create a puzzle.&#10;"/>
+            </children>
+        </TextFlow>
+    </VBox>
+</AnchorPane>

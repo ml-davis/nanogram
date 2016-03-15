@@ -1,0 +1,27 @@
+.root {
+    -fx-background-color: "#789EE9";
+}
+
+Text {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-fill: #333333;
+    -fx-effect: dropshadow(three-pass-box, rgba(225,225,225,0.5), 1, 1, 1, 1);
+}
+
+#title {
+    -fx-font-size: 34;
+    -fx-effect: dropshadow(three-pass-box, rgba(225,225,225,0.5), 1, 2, 2, 2);
+}
+
+#indicator {
+    -fx-font-size: 11;
+}
+
+.button {
+    -fx-text-fill: #D7DEE7;
+    -fx-font-family: "Arial Narrow";
+    -fx-font-weight: bold;
+    -fx-background-color: linear-gradient(#636A71, #333333);
+    -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6), 5, 0.0, 0, 1);
+}
