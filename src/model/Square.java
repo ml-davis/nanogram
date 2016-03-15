@@ -35,7 +35,9 @@ public class Square implements Serializable {
         return black;
     }
 
-    public boolean isUserSelected() { return userSelected; }
+    public boolean isUserSelected() {
+        return userSelected;
+    }
 
     public void setStyle(Enums.SquareColor color) {
         String css = "-fx-background-radius: 0, 0, 0; ";

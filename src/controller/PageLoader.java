@@ -19,6 +19,8 @@ import model.Board;
 
 public class PageLoader {
     @FXML
+    public GridPane boardPane;
+    @FXML
     private MenuItem five;
     @FXML
     private MenuItem thirteen;
@@ -70,7 +72,7 @@ public class PageLoader {
     }
 
     @FXML
-    public void loadSolvePageOne(ActionEvent event) {
+    public void loadSolvePage(ActionEvent event) {
         AnchorPane solvePage = navigateToPage(Enums.Page.SOLVE_PAGE);
     }
 
@@ -104,25 +106,25 @@ public class PageLoader {
     }
 
     private void addColumnIndicators(int numberOfColumns, GridPane grid, Observer boardPane) {
-        VBox[] vbox = new VBox[numberOfColumns];
+        VBox[] vBox = new VBox[numberOfColumns];
         for (int i = 0; i < numberOfColumns; i++) {
-            vbox[i] = new VBox();
-            vbox[i].setAlignment(Pos.BOTTOM_CENTER);
-            vbox[i].setPrefHeight(110);
-            grid.add(vbox[i], i+1, 0);
+            vBox[i] = new VBox();
+            vBox[i].setAlignment(Pos.BOTTOM_CENTER);
+            vBox[i].setPrefHeight(110);
+            grid.add(vBox[i], i+1, 0);
         }
-        boardPane.setColumnIndicators(vbox);
+        boardPane.setColumnIndicators(vBox);
     }
 
     private void addRowIndicators(int numberOfRows, GridPane grid, Observer boardPane) {
-        HBox[] hbox = new HBox[numberOfRows];
+        HBox[] hBox = new HBox[numberOfRows];
         for (int i = 0; i < numberOfRows; i++) {
-            hbox[i] = new HBox();
-            hbox[i].setAlignment(Pos.CENTER_RIGHT);
-            hbox[i].setPrefWidth(110);
-            grid.add(hbox[i], 0, i + 1);
+            hBox[i] = new HBox();
+            hBox[i].setAlignment(Pos.CENTER_RIGHT);
+            hBox[i].setPrefWidth(110);
+            grid.add(hBox[i], 0, i + 1);
         }
-        boardPane.setRowIndicators(hbox);
+        boardPane.setRowIndicators(hBox);
     }
 
     private int getCellSize(int largestLine) {

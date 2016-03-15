@@ -15,9 +15,9 @@
         <Menu text="Solve">
             <items>
                 <Menu text="Solve Random Puzzle">
-                    <MenuItem text="Solve 5x5 (easy)" onAction="#loadSolvePageOne"/>
-                    <MenuItem text="Solve 13x13 (medium)" onAction="#loadSolvePageOne"/>
-                    <MenuItem text="Solve 20x20 (hard)" onAction="#loadSolvePageOne"/>
+                    <MenuItem text="Solve 5x5 (easy)" onAction="#loadSolvePage"/>
+                    <MenuItem text="Solve 13x13 (medium)" onAction="#loadSolvePage"/>
+                    <MenuItem text="Solve 20x20 (hard)" onAction="#loadSolvePage"/>
                 </Menu>
 
                 <Menu text="Solve Saved Puzzle">

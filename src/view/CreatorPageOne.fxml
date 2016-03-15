@@ -25,7 +25,7 @@
             <padding>
                 <Insets bottom="25"/> <!-- Add space between board and buttons -->
             </padding>
-            <!-- controller.PageLoader.loadCreatorPageOne() will load board here with double for loop dependant on board size -->
+            <!-- controller.PageLoader.createBoard() will load board here with double for loop dependant on board size -->
         </GridPane>
 
         <HBox spacing="10">
