@@ -1,6 +1,7 @@
 package model;
 
 import helpers.Enums;
+import main.Main;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,10 +45,14 @@ public class Board extends Observable implements Serializable {
         board[row][column].toggleBlack();
     }
 
-    public Board randomFillBoard(Board board) {
+    public void toggleUserSelected(int row, int column) {
+        board[row][column].toggleUserSelected();
+    }
+
+    public Board randomFillBoard() {
         Random random = new Random();
-        int numberOfRows = board.getNumberOfRows();
-        int numberOfColumns = board.getNumberOfColumns();
+        int numberOfRows = this.getNumberOfRows();
+        int numberOfColumns = this.getNumberOfColumns();
 
         System.out.println("rows = " + numberOfRows);
         System.out.println("cols = " + numberOfColumns);
@@ -69,24 +74,48 @@ public class Board extends Observable implements Serializable {
             System.out.println("piece = " + piece);
             row = (int) Math.floor(piece/numberOfColumns); // map the piece to its corresponding row
             System.out.println("row = " + row);
-            column = piece % board.getNumberOfColumns(); // map the piece to its corresponding column
+            column = piece % this.getNumberOfColumns(); // map the piece to its corresponding column
             System.out.println("col = " + column);
             if (i < amountOfSpacesBlack) {
                 System.out.println("toggle black");
-                board.toggleBlack(row, column);
-                board.setStyle(row, column, Enums.SquareColor.BLACK);
+                this.toggleBlack(row, column);
+                this.setStyle(row, column, Enums.SquareColor.BLACK);
             }
             System.out.println("toggle flag");
-            board.toggleFlag(row, column);
+            this.toggleFlag(row, column);
             System.out.println();
         }
 
         notifyObservers();
 
-        return board;
+        return this;
     }
 
-    public void toggleUserSelected(int row, int column) { board[row][column].toggleUserSelected(); }
+    public boolean isSolved() {
+        return columnsSolved(this) && rowsSolved(this);
+    }
+
+    private boolean columnsSolved(Board board) {
+        for (int i = 0; i < board.getNumberOfColumns(); i++) {
+            ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(i));
+            ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(i);
+            if (!userIndicator.equals(solutionIndicator)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean rowsSolved(Board board) {
+        for (int i = 0; i < board.getNumberOfRows(); i++) {
+            ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(i));
+            ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(i);
+            if (!userIndicator.equals(solutionIndicator)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public ArrayList<Integer> createIndicatorList(Square[] line) {
         ArrayList<Integer> list = new ArrayList<>();
@@ -122,44 +151,6 @@ public class Board extends Observable implements Serializable {
         if (count > 0)
             list.add(count);
         return list;
-    }
-
-    public int getNumberSelectedInColumn(int row) {
-        int sum = 0;
-        for (int i = 0; i < numberOfColumns; i++) {
-            if (isBlack(i, row) || isUserSelected(i, row)) {
-                sum++;
-            }
-        }
-        return sum;
-    }
-
-    public int getNumberSelectedInRow(int column) {
-        int sum = 0;
-        for (int i = 0; i < numberOfRows; i++) {
-            if (isBlack(column, i) || isUserSelected(column, i)) {
-                sum++;
-            }
-        }
-        return sum;
-    }
-
-    public int getSumOfRowIndicator(int row) {
-        int sum = 0;
-        ArrayList<Integer> indicator = getRowIndicator(row);
-        for (int i : indicator) {
-            sum += i;
-        }
-        return sum;
-    }
-
-    public int getSumOfColumnIndicator(int column) {
-        int sum = 0;
-        ArrayList<Integer> indicator = getColumnIndicator(column);
-        for (int i : indicator) {
-            sum += i;
-        }
-        return sum;
     }
 
     public boolean isFlagged(int row, int column) {

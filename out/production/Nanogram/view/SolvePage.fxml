@@ -7,7 +7,7 @@
 
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PageLoader">
     <VBox spacing="10">
         <padding>
             <Insets top="25" right="75" bottom="25" left="75"/>
@@ -22,12 +22,12 @@
         </TextFlow>
 
         <GridPane fx:id="boardPane" hgap="2" vgap="2" alignment="CENTER">
-            <!-- TODO add random board here -->
+            <!-- board generated here by controller.PageLoader -->
         </GridPane>
 
         <HBox spacing="10">
             <Button text="Cancel"/> <!-- TODO implement cancel button -->
-            <Button text="Verify"/> <!-- TODO implement submit button -->
+            <Button text="Verify" onAction="#verifyPuzzle"/>
         </HBox>
     </VBox>
 </AnchorPane>

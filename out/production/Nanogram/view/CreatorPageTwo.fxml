@@ -16,8 +16,8 @@
 
         <TextFlow>
             <children>
-                <Text text="Step 2:&#9;Click on any black square to hide it. Grey squares will not be visible to the player that is trying&#10;"/>
-                <Text text="&#9;&#9;trying to solve the puzzle. This will be the initial state of the puzzle for users to solve.&#10;"/>
+                <Text text="Step 2:&#9;Click on any black square to hide it. Grey squares will not be visible to the player that is trying to &#10;"/>
+                <Text text="&#9;&#9;solve the puzzle. This will be the initial state of the puzzle for users to solve.&#10;"/>
             </children>
         </TextFlow>
 

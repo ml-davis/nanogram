@@ -42,7 +42,7 @@ public class PageLoader {
     }
 
     @FXML
-    public void loadFrontPage(ActionEvent event) {
+    public void loadFrontPage() {
         AnchorPane frontPage = navigateToPage(Enums.Page.FRONT_PAGE);
     }
 
@@ -74,10 +74,17 @@ public class PageLoader {
         SolvePageController controller = new SolvePageController(boardSize, boardSize);
         if (boardSize > 0) {
             Board board = new Board(boardSize, boardSize);
-            board = board.randomFillBoard(board);
+            board = board.randomFillBoard();
             createBoard(solvePage, board, controller);
             Main.getBoard().notifyObservers();
         }
+    }
+
+    @FXML
+    public void verifyPuzzle() {
+        SolvePageController controller = new SolvePageController(Main.getBoard().getNumberOfRows(),
+                Main.getBoard().getNumberOfColumns());
+        controller.verifyPuzzle();
     }
 
     private void createBoard(AnchorPane page, Board board, Observer boardPane) {
