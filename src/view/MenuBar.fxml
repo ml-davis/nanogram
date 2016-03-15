@@ -6,18 +6,18 @@
     <menus>
         <Menu text="Create">
             <items>
-                <MenuItem text="Create 5x5 (easy)" fx:id="five" onAction="#loadCreatorPageOne"/>
-                <MenuItem text="Create 13x13 (medium)" fx:id="thirteen" onAction="#loadCreatorPageOne"/>
-                <MenuItem text="Create 20x20 (hard)" fx:id="twenty" onAction="#loadCreatorPageOne"/>
+                <MenuItem text="Create 5x5 (easy)" fx:id="createFive" onAction="#loadCreatorPageOne"/>
+                <MenuItem text="Create 13x13 (medium)" fx:id="createThirteen" onAction="#loadCreatorPageOne"/>
+                <MenuItem text="Create 20x20 (hard)" fx:id="createTwenty" onAction="#loadCreatorPageOne"/>
                 <MenuItem text="Create Custom"/>
             </items>
         </Menu>
         <Menu text="Solve">
             <items>
                 <Menu text="Solve Random Puzzle">
-                    <MenuItem text="Solve 5x5 (easy)" onAction="#loadSolvePage"/>
-                    <MenuItem text="Solve 13x13 (medium)" onAction="#loadSolvePage"/>
-                    <MenuItem text="Solve 20x20 (hard)" onAction="#loadSolvePage"/>
+                    <MenuItem text="Solve 5x5 (easy)" fx:id="solveFive" onAction="#loadSolvePage"/>
+                    <MenuItem text="Solve 13x13 (medium)" fx:id="solveThirteen" onAction="#loadSolvePage"/>
+                    <MenuItem text="Solve 20x20 (hard)" fx:id="solveTwenty" onAction="#loadSolvePage"/>
                 </Menu>
 
                 <Menu text="Solve Saved Puzzle">

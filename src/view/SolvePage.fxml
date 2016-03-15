@@ -1,15 +1,33 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.text.TextFlow?>
 <?import javafx.geometry.Insets?>
 
-<?import javafx.scene.layout.AnchorPane?>
-<AnchorPane>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1">
     <VBox spacing="10">
         <padding>
             <Insets top="25" right="75" bottom="25" left="75"/>
-            <!-- TODO add random board here -->
         </padding>
         <Text id="title" text="Solve the puzzle"/>
-        <!-- TODO add verify and hint buttons -->
+
+        <TextFlow>
+            <children>
+                <Text text="Click on any white square to turn it black You want to have the colors of the squares to match the numbers on&#10;"/>
+                <Text text="the sides of the board. When you are done, click on 'Verify' to validate your solution.&#10;"/>
+            </children>
+        </TextFlow>
+
+        <GridPane fx:id="boardPane" hgap="2" vgap="2" alignment="CENTER">
+            <!-- TODO add random board here -->
+        </GridPane>
+
+        <HBox spacing="10">
+            <Button text="Cancel"/> <!-- TODO implement cancel button -->
+            <Button text="Verify"/> <!-- TODO implement submit button -->
+        </HBox>
     </VBox>
 </AnchorPane>

@@ -21,10 +21,7 @@
             </children>
         </TextFlow>
 
-        <GridPane fx:id="boardPane" hgap="2" vgap="2">
-            <padding>
-                <Insets bottom="25"/> <!-- Add space between board and buttons -->
-            </padding>
+        <GridPane fx:id="boardPane" hgap="2" vgap="2" alignment="CENTER">
             <!-- controller.PageLoader.createBoard() will load board here with double for loop dependant on board size -->
         </GridPane>
 

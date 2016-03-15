@@ -3,14 +3,14 @@
 }
 
 Text {
-    -fx-font-size: 20px;
+    -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-fill: #333333;
     -fx-effect: dropshadow(three-pass-box, rgba(225,225,225,0.5), 1, 1, 1, 1);
 }
 
 #title {
-    -fx-font-size: 34;
+    -fx-font-size: 28;
     -fx-effect: dropshadow(three-pass-box, rgba(225,225,225,0.5), 1, 2, 2, 2);
 }
 

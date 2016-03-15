@@ -21,13 +21,9 @@ public class PageLoader {
     @FXML
     public GridPane boardPane;
     @FXML
-    private MenuItem five;
+    private MenuItem createFive, createThirteen, createTwenty, solveFive, solveThirteen, solveTwenty;
     @FXML
-    private MenuItem thirteen;
-    @FXML
-    private MenuItem twenty;
-    @FXML
-    private MenuItem custom; // TODO implement this
+    private MenuItem createCustom; // TODO implement this
 
     // navigates to page and returns it's object
     public AnchorPane navigateToPage(Enums.Page page) {
@@ -74,6 +70,14 @@ public class PageLoader {
     @FXML
     public void loadSolvePage(ActionEvent event) {
         AnchorPane solvePage = navigateToPage(Enums.Page.SOLVE_PAGE);
+        int boardSize = getBoardSize(event);
+        SolvePageController controller = new SolvePageController(boardSize, boardSize);
+        if (boardSize > 0) {
+            Board board = new Board(boardSize, boardSize);
+            board = board.randomFillBoard(board);
+            createBoard(solvePage, board, controller);
+            Main.getBoard().notifyObservers();
+        }
     }
 
     private void createBoard(AnchorPane page, Board board, Observer boardPane) {
@@ -110,7 +114,7 @@ public class PageLoader {
         for (int i = 0; i < numberOfColumns; i++) {
             vBox[i] = new VBox();
             vBox[i].setAlignment(Pos.BOTTOM_CENTER);
-            vBox[i].setPrefHeight(110);
+            vBox[i].setPrefHeight(130);
             grid.add(vBox[i], i+1, 0);
         }
         boardPane.setColumnIndicators(vBox);
@@ -121,7 +125,7 @@ public class PageLoader {
         for (int i = 0; i < numberOfRows; i++) {
             hBox[i] = new HBox();
             hBox[i].setAlignment(Pos.CENTER_RIGHT);
-            hBox[i].setPrefWidth(110);
+            hBox[i].setPrefWidth(130);
             grid.add(hBox[i], 0, i + 1);
         }
         boardPane.setRowIndicators(hBox);
@@ -136,16 +140,16 @@ public class PageLoader {
     }
 
     private int getBoardSize(ActionEvent event) {
-        if (event.getSource() == five) {
+        if (event.getSource() == createFive || event.getSource() == solveFive) {
             System.out.println("Creating 5x5\n");
             return 5;
-        } else if (event.getSource() == thirteen) {
+        } else if (event.getSource() == createThirteen || event.getSource() == solveThirteen) {
             System.out.println("Creating 13x13\n");
             return 13;
-        } else if (event.getSource() == twenty) {
+        } else if (event.getSource() == createTwenty || event.getSource() == solveTwenty) {
             System.out.println("Creating 20x20\n");
             return 20;
-        } else if (event.getSource() == custom) {
+        } else if (event.getSource() == createCustom) {
             System.out.println("Opening custom board window\n");
             // TODO implement custom board window
             return -1;
