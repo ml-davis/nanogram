@@ -124,6 +124,13 @@ public class PageLoader {
         controller.verifyPuzzle();
     }
 
+    @FXML
+    public void getHint() {
+        SolvePageController controller = new SolvePageController(Main.getBoard().getNumberOfRows(),
+                Main.getBoard().getNumberOfColumns());
+        controller.getHint();
+    }
+
     public static void launchPromptWindow(String message) {
         Stage stage = new Stage();
         VBox window = new VBox();

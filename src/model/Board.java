@@ -7,6 +7,7 @@ import main.Main;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class Board extends Observable implements Serializable {
@@ -64,10 +65,9 @@ public class Board extends Observable implements Serializable {
             list.add(i);
         }
 
-        // toggle 20% of board black and flagged, and additional 20% only flagged
+        // randomly toggle 20% of board black and flagged, toggle additional 20% only flagged
         int amountOfSpacesBlack = (int) (Math.floor(numberOfRows * numberOfColumns) * 0.2);
         int amountOfSpacesFlagged = (int) (Math.floor(numberOfRows * numberOfColumns) * 0.4);
-
 
         int piece, row, column;
         for (int i = 0; i < amountOfSpacesFlagged; i++) {
@@ -93,10 +93,10 @@ public class Board extends Observable implements Serializable {
     }
 
     public boolean isSolved() {
-        return columnsSolved(this) && rowsSolved(this);
+        return areColumnsSolved(this) && areRowsSolved(this);
     }
 
-    private boolean columnsSolved(Board board) {
+    private boolean areColumnsSolved(Board board) {
         for (int i = 0; i < board.getNumberOfColumns(); i++) {
             ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(i));
             ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(i);
@@ -107,7 +107,7 @@ public class Board extends Observable implements Serializable {
         return true;
     }
 
-    private boolean rowsSolved(Board board) {
+    private boolean areRowsSolved(Board board) {
         for (int i = 0; i < board.getNumberOfRows(); i++) {
             ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(i));
             ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(i);
@@ -126,16 +126,16 @@ public class Board extends Observable implements Serializable {
         if (errorRows.size() > 0) {
             errorMessage += "Rows:\t";
         }
-        for (int i = 0; i < errorRows.size(); i++) {
-            errorMessage += LetterMapper.mapToLetter(errorRows.get(i)) + " ";
+        for (Integer errorRow : errorRows) {
+            errorMessage += LetterMapper.mapToLetter(errorRow) + " ";
         }
         errorMessage += "\n";
 
         if (errorColumns.size() > 0) {
             errorMessage += "Columns: \t";
         }
-        for (int i = 0; i < errorColumns.size(); i++) {
-            errorMessage += LetterMapper.mapToLetter(errorColumns.get(i)) + " ";
+        for (Integer errorColumn : errorColumns) {
+            errorMessage += LetterMapper.mapToLetter(errorColumn) + " ";
         }
         errorMessage += "\n";
 
@@ -164,6 +164,78 @@ public class Board extends Observable implements Serializable {
             }
         }
         return errorRows;
+    }
+
+    public String getHint() {
+        HashMap<String, Double> percentageFilled = new HashMap<>();
+        for (int i = 0; i < this.getNumberOfColumns(); i++) {
+            int sumOfIndicator = getSumOfColumnIndicator(i);
+            int sumOfBlack = getSumOfBlackOrSelectedInRow(i);
+            percentageFilled.put("Column " + LetterMapper.mapToLetter(i + 1), (double) sumOfBlack / sumOfIndicator);
+        }
+        for (int i = 0; i < this.getNumberOfRows(); i++) {
+            int sumOfIndicator = getSumOfRowIndicator(i);
+            int sumOfBlack = getSumOfBlackOrSelectedInColumn(i);
+            percentageFilled.put("Row " + LetterMapper.mapToLetter(i + 1), (double) sumOfBlack / sumOfIndicator);
+        }
+
+        System.out.println(percentageFilled);
+
+        return "Look in " +  getHighestLine(percentageFilled);
+    }
+
+    private String getHighestLine(HashMap<String, Double> map) {
+        String highestLine = "";
+        double highestValue = 0;
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
+            String key = entry.getKey();
+            Double value = entry.getValue();
+            if (value > highestValue && value != 1) {
+                highestLine = key;
+                highestValue = value;
+            }
+        }
+        return highestLine;
+    }
+
+    private int getSumOfColumnIndicator(int column) {
+        ArrayList<Integer> columnIndicator = getColumnIndicator(column);
+        int sum = 0;
+        for (int indicator : columnIndicator) {
+            sum += indicator;
+        }
+        return sum;
+    }
+
+    private int getSumOfBlackOrSelectedInColumn(int column) {
+        int sum = 0;
+        Square[] line = this.getColumn(column);
+        for (Square square: line) {
+            if (square.isBlack() || square.isUserSelected()) {
+                sum++;
+            }
+        }
+        return sum;
+    }
+
+    private int getSumOfRowIndicator(int row) {
+        ArrayList<Integer> rowIndicator = getRowIndicator(row);
+        int sum = 0;
+        for (int indicator : rowIndicator) {
+            sum += indicator;
+        }
+        return sum;
+    }
+
+    private int getSumOfBlackOrSelectedInRow(int row) {
+        int sum = 0;
+        Square[] line = this.getRow(row);
+        for (Square square : line) {
+            if (square.isBlack() || square.isUserSelected()) {
+                sum++;
+            }
+        }
+        return sum;
     }
 
     public ArrayList<Integer> createIndicatorList(Square[] line) {
