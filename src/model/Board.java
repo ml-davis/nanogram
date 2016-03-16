@@ -100,6 +100,9 @@ public class Board extends Observable implements Serializable {
         for (int i = 0; i < board.getNumberOfColumns(); i++) {
             ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(i));
             ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(i);
+            System.out.println("u: " + userIndicator);
+            System.out.println("s: " + solutionIndicator);
+            System.out.println();
             if (!userIndicator.equals(solutionIndicator)) {
                 return false;
             }
@@ -111,6 +114,9 @@ public class Board extends Observable implements Serializable {
         for (int i = 0; i < board.getNumberOfRows(); i++) {
             ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(i));
             ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(i);
+            System.out.println("u: " + userIndicator);
+            System.out.println("s: " + solutionIndicator);
+            System.out.println();
             if (!userIndicator.equals(solutionIndicator)) {
                 return false;
             }
@@ -127,7 +133,7 @@ public class Board extends Observable implements Serializable {
             errorMessage += "Rows:\t";
         }
         for (Integer errorRow : errorRows) {
-            errorMessage += LetterMapper.mapToLetter(errorRow) + " ";
+            errorMessage += LetterMapper.mapToLetter(errorRow + 1) + " ";
         }
         errorMessage += "\n";
 
@@ -135,7 +141,7 @@ public class Board extends Observable implements Serializable {
             errorMessage += "Columns: \t";
         }
         for (Integer errorColumn : errorColumns) {
-            errorMessage += LetterMapper.mapToLetter(errorColumn) + " ";
+            errorMessage += LetterMapper.mapToLetter(errorColumn + 1) + " ";
         }
         errorMessage += "\n";
 
@@ -181,7 +187,7 @@ public class Board extends Observable implements Serializable {
 
         System.out.println(percentageFilled);
 
-        return "Look in " +  getHighestLine(percentageFilled);
+        return getHighestLine(percentageFilled);
     }
 
     private String getHighestLine(HashMap<String, Double> map) {
@@ -195,7 +201,11 @@ public class Board extends Observable implements Serializable {
                 highestValue = value;
             }
         }
-        return highestLine;
+        if (highestValue == 0) {
+            return "The solution is complete!!";
+        } else {
+            return "Look in " + highestLine;
+        }
     }
 
     private int getSumOfColumnIndicator(int column) {

@@ -39,8 +39,8 @@ public class SolvePageController extends Observer {
     }
 
     public void getHint() {
-        System.out.println("Retrieving hint");
         String hint = Main.getBoard().getHint();
+        System.out.println(hint + "\n");
         PageLoader.launchPromptWindow(hint);
     }
 }
