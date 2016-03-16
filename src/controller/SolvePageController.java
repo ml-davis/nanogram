@@ -3,8 +3,6 @@ package controller;
 import helpers.Enums;
 import main.Main;
 
-import java.util.ArrayList;
-
 public class SolvePageController extends Observer {
 
     public SolvePageController(int numberOfRows, int numberOfColumns) {
@@ -31,10 +29,12 @@ public class SolvePageController extends Observer {
 
 
     public void verifyPuzzle() {
+        String message;
         if (Main.getBoard().isSolved()) {
-            System.out.println("You solved the puzzle genius!");
+            message = "Congratulations! You solved the puzzle!";
         } else {
-            System.out.println("You fucking suck at this!!");
+          message = Main.getBoard().getErrorMessage();
         }
+        PageLoader.launchPromptWindow(message);
     }
 }

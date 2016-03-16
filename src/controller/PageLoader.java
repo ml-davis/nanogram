@@ -1,21 +1,30 @@
 package controller;
 
 import helpers.Enums;
+import helpers.LetterMapper;
 import helpers.PageMapper;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
 import java.net.URL;
 
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import main.Main;
 import model.Board;
+
+import static helpers.LetterMapper.mapToLetter;
 
 public class PageLoader {
     @FXML
@@ -77,6 +86,34 @@ public class PageLoader {
             board = board.randomFillBoard();
             createBoard(solvePage, board, controller);
             Main.getBoard().notifyObservers();
+            GridPane grid = (GridPane) solvePage.lookup("#boardPane");
+            addRowLabels(boardSize, grid);
+            addColumnLabels(boardSize, grid);
+        }
+
+    }
+
+    public void addRowLabels(int numberOfRows, GridPane grid) {
+        for (int i = 0; i < numberOfRows; i++) {
+            HBox hBox = new HBox();
+            hBox.setAlignment(Pos.CENTER_LEFT);
+            char rowLetter = LetterMapper.mapToLetter(i + 1);
+            Text text = new Text(Character.toString(rowLetter));
+            text.setId("indicator");
+            hBox.getChildren().add(text);
+            grid.add(hBox, numberOfRows + 1, i + 1);
+        }
+    }
+
+    public void addColumnLabels(int numberOfColumns, GridPane grid) {
+        for (int i = 0; i < numberOfColumns; i++) {
+            VBox vBox = new VBox();
+            vBox.setAlignment(Pos.TOP_CENTER);
+            char rowLetter = LetterMapper.mapToLetter(i + 1);
+            Text text = new Text(Character.toString(rowLetter));
+            text.setId("indicator");
+            vBox.getChildren().add(text);
+            grid.add(vBox, i + 1, numberOfColumns + 1);
         }
     }
 
@@ -85,6 +122,28 @@ public class PageLoader {
         SolvePageController controller = new SolvePageController(Main.getBoard().getNumberOfRows(),
                 Main.getBoard().getNumberOfColumns());
         controller.verifyPuzzle();
+    }
+
+    public static void launchPromptWindow(String message) {
+        Stage stage = new Stage();
+        VBox window = new VBox();
+        window.setPadding(new Insets(25, 25, 25, 25));
+        window.setSpacing(25);
+        window.setAlignment(Pos.CENTER);
+
+        Label label = new Label(message);
+
+        Button okButton = new Button("OK");
+        okButton.setOnAction(e -> stage.close());
+
+        window.getChildren().addAll(label, okButton);
+
+        int width = 400, height = 200;
+        Scene scene = new Scene(window, width, height);
+
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.showAndWait();
     }
 
     private void createBoard(AnchorPane page, Board board, Observer boardPane) {
@@ -116,17 +175,6 @@ public class PageLoader {
         Main.setBoard(board);
     }
 
-    private void addColumnIndicators(int numberOfColumns, GridPane grid, Observer boardPane) {
-        VBox[] vBox = new VBox[numberOfColumns];
-        for (int i = 0; i < numberOfColumns; i++) {
-            vBox[i] = new VBox();
-            vBox[i].setAlignment(Pos.BOTTOM_CENTER);
-            vBox[i].setPrefHeight(130);
-            grid.add(vBox[i], i+1, 0);
-        }
-        boardPane.setColumnIndicators(vBox);
-    }
-
     private void addRowIndicators(int numberOfRows, GridPane grid, Observer boardPane) {
         HBox[] hBox = new HBox[numberOfRows];
         for (int i = 0; i < numberOfRows; i++) {
@@ -136,6 +184,17 @@ public class PageLoader {
             grid.add(hBox[i], 0, i + 1);
         }
         boardPane.setRowIndicators(hBox);
+    }
+
+    private void addColumnIndicators(int numberOfColumns, GridPane grid, Observer boardPane) {
+        VBox[] vBox = new VBox[numberOfColumns];
+        for (int i = 0; i < numberOfColumns; i++) {
+            vBox[i] = new VBox();
+            vBox[i].setAlignment(Pos.BOTTOM_CENTER);
+            vBox[i].setPrefHeight(130);
+            grid.add(vBox[i], i+1, 0);
+        }
+        boardPane.setColumnIndicators(vBox);
     }
 
     private int getCellSize(int largestLine) {

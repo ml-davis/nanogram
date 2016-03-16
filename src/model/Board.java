@@ -1,6 +1,7 @@
 package model;
 
 import helpers.Enums;
+import helpers.LetterMapper;
 import main.Main;
 
 import java.io.Serializable;
@@ -115,6 +116,54 @@ public class Board extends Observable implements Serializable {
             }
         }
         return true;
+    }
+
+    public String getErrorMessage() {
+        ArrayList<Integer> errorColumns = getErrorColumns(this);
+        ArrayList<Integer> errorRows = getErrorRows(this);
+        String errorMessage = "There was an error in your solution. Check in\n";
+
+        if (errorRows.size() > 0) {
+            errorMessage += "Rows:\t";
+        }
+        for (int i = 0; i < errorRows.size(); i++) {
+            errorMessage += LetterMapper.mapToLetter(errorRows.get(i)) + " ";
+        }
+        errorMessage += "\n";
+
+        if (errorColumns.size() > 0) {
+            errorMessage += "Columns: \t";
+        }
+        for (int i = 0; i < errorColumns.size(); i++) {
+            errorMessage += LetterMapper.mapToLetter(errorColumns.get(i)) + " ";
+        }
+        errorMessage += "\n";
+
+        return errorMessage;
+    }
+
+    private ArrayList<Integer> getErrorColumns(Board board) {
+        ArrayList<Integer> errorColumns = new ArrayList<>(board.getNumberOfColumns());
+        for (int i = 0; i < board.getNumberOfColumns(); i++) {
+            ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(i));
+            ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(i);
+            if (!userIndicator.equals(solutionIndicator)) {
+                errorColumns.add(i);
+            }
+        }
+        return errorColumns;
+    }
+
+    private ArrayList<Integer> getErrorRows(Board board) {
+        ArrayList<Integer> errorRows = new ArrayList<>(board.getNumberOfRows());
+        for (int i = 0; i < board.getNumberOfRows(); i++) {
+            ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(i));
+            ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(i);
+            if (!userIndicator.equals(solutionIndicator)) {
+                errorRows.add(i);
+            }
+        }
+        return errorRows;
     }
 
     public ArrayList<Integer> createIndicatorList(Square[] line) {
