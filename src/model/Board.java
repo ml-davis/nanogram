@@ -255,11 +255,11 @@ public class Board extends Observable implements Serializable {
         return sum;
     }
 
-    public void getValidRowCombos(int row) {
+    public ArrayList<ArrayList<Boolean>> getValidRowCombos(int row) {
         Board board = this;
         ArrayList<Integer> rowIndicator = board.getColumnIndicator(row);
         ArrayList<ArrayList<Boolean>> possibleCombos = getRowCombos(board, row);
-        ArrayList<Boolean> validCombos = new ArrayList<>();
+        ArrayList<ArrayList<Boolean>> validCombos = new ArrayList<>();
         Square[] squares = getRow(row);
 
         System.out.println("\n****************** VALID ******************");
@@ -275,13 +275,18 @@ public class Board extends Observable implements Serializable {
             ArrayList<Integer> possibleIndicator = createPossibleIndicatorList(getRow(row));
 
             if (possibleIndicator.equals(rowIndicator)) {
+                ArrayList<Boolean> combo = new ArrayList<>();
                 for (Square square : squares) {
+                    combo.add(square.isPossible());
                     System.out.printf("%-10s", square.isPossible());
                 }
                 System.out.println();
+                validCombos.add(combo);
             }
             clearPossible(board, row);
         }
+
+        return validCombos;
     }
 
     // [2 1 3]
@@ -309,19 +314,17 @@ public class Board extends Observable implements Serializable {
                     placePieceOnRow(board, row, rowIndicator.get(focusPiece), index++);
                     combos.add(addRowToCombos(board, row));
                 }
-
                 clearPossible(board, row);
             } else {
                 clearPossible(board, row, index - 1);
                 placePieceOnRow(board, row, rowIndicator.get(focusPiece), index);
             }
         }
-        clearPossible(board, row);
         if (rowIndicator.size() == 1) {
             placePieceOnRow(board, row, rowIndicator.get(0), board.getNumberOfColumns() - 1);
             combos.add(addRowToCombos(board, row));
         }
-
+        clearPossible(board, row);
         // print some shit
         System.out.println("*********** POSSIBLE ***********");
         for (int i = 0; i < board.getNumberOfColumns(); i++) {
@@ -406,6 +409,22 @@ public class Board extends Observable implements Serializable {
         if (count > 0)
             list.add(count);
         return list;
+    }
+
+    public void resetColors() {
+        for (int i = 0; i < this.getNumberOfRows(); i++) {
+            for (int j = 0; j < this.getNumberOfColumns(); j++) {
+                Square square = this.getSquare(i, j);
+                if (square.isBlack()) {
+                    square.setStyle(Enums.SquareColor.BLACK);
+                } else if (square.isUserSelected()) {
+                    square.setStyle(Enums.SquareColor.DARK_GREY);
+                } else {
+                    square.setStyle(Enums.SquareColor.WHITE);
+                }
+            }
+        }
+        this.notifyObservers();
     }
 
     public ArrayList<Integer> createUserIndicatorList(Square[] line) {

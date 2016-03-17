@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,13 +17,10 @@ import javafx.scene.layout.*;
 import java.io.IOException;
 import java.net.URL;
 
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import main.Main;
 import model.Board;
-
-import static helpers.LetterMapper.mapToLetter;
 
 public class PageLoader {
     @FXML
@@ -86,33 +82,41 @@ public class PageLoader {
             board = board.randomFillBoard();
             createBoard(solvePage, board, controller);
             Main.getBoard().notifyObservers();
+            int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
             GridPane grid = (GridPane) solvePage.lookup("#boardPane");
-            addRowLabels(boardSize, grid);
-            addColumnLabels(boardSize, grid);
+            addRowLabels(boardSize, grid, cellSize);
+            addColumnLabels(boardSize, grid, cellSize);
         }
 
     }
 
-    public void addRowLabels(int numberOfRows, GridPane grid) {
+    public void addRowLabels(int numberOfRows, GridPane grid, int cellSize) {
         for (int i = 0; i < numberOfRows; i++) {
             HBox hBox = new HBox();
             hBox.setAlignment(Pos.CENTER_LEFT);
             char rowLetter = LetterMapper.mapToLetter(i + 1);
-            Text text = new Text(Character.toString(rowLetter));
-            text.setId("indicator");
-            hBox.getChildren().add(text);
+            Button rowButton = new Button(Character.toString(rowLetter));
+            rowButton.setId("lineLabel");
+            rowButton.setPrefSize(cellSize * .6, cellSize);
+            hBox.getChildren().add(rowButton);
             grid.add(hBox, numberOfRows + 1, i + 1);
         }
     }
 
-    public void addColumnLabels(int numberOfColumns, GridPane grid) {
+    public void addColumnLabels(int numberOfColumns, GridPane grid, int cellSize) {
+        SolvePageController controller = new SolvePageController(numberOfColumns, numberOfColumns);
         for (int i = 0; i < numberOfColumns; i++) {
             VBox vBox = new VBox();
             vBox.setAlignment(Pos.TOP_CENTER);
             char rowLetter = LetterMapper.mapToLetter(i + 1);
-            Text text = new Text(Character.toString(rowLetter));
-            text.setId("indicator");
-            vBox.getChildren().add(text);
+            Button columnButton = new Button(Character.toString(rowLetter));
+            columnButton.setId("lineLabel");
+            columnButton.setPrefSize(cellSize, cellSize * .6);
+            final int finalI = i;
+            columnButton.setOnAction(e -> {
+                controller.columnButtonClicked(finalI);
+            });
+            vBox.getChildren().add(columnButton);
             grid.add(vBox, i + 1, numberOfColumns + 1);
         }
     }
