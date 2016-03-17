@@ -255,30 +255,95 @@ public class Board extends Observable implements Serializable {
         return sum;
     }
 
-    // [2 1 3]
-    public void getRowCombos(int row) {
+    public void getValidRowCombos(int row) {
         Board board = this;
         ArrayList<Integer> rowIndicator = board.getColumnIndicator(row);
-        System.out.println(rowIndicator);
+        ArrayList<ArrayList<Boolean>> possibleCombos = getRowCombos(board, row);
+        ArrayList<Boolean> validCombos = new ArrayList<>();
+        Square[] squares = getRow(row);
+
+        System.out.println("\n****************** VALID ******************");
+        for (int i = 0; i < board.getNumberOfColumns(); i++) {
+            System.out.printf("%-10s", i);
+        }
+        System.out.println();
+
+        for (ArrayList<Boolean> possibleCombo : possibleCombos) {
+            for (int i = 0; i < possibleCombo.size(); i++) {
+                squares[i].setPossible(possibleCombo.get(i));
+            }
+            ArrayList<Integer> possibleIndicator = createPossibleIndicatorList(getRow(row));
+
+            if (possibleIndicator.equals(rowIndicator)) {
+                for (Square square : squares) {
+                    System.out.printf("%-10s", square.isPossible());
+                }
+                System.out.println();
+            }
+            clearPossible(board, row);
+        }
+    }
+
+    // [2 1 3]
+    public ArrayList<ArrayList<Boolean>> getRowCombos(Board board, int row) {
+        ArrayList<Integer> rowIndicator = board.getColumnIndicator(row);
+        System.out.println("Indicator: " + rowIndicator);
+        ArrayList<ArrayList<Boolean>> combos = new ArrayList<>();
 
         int rounds = board.getNumberOfColumns() - getSumOfRowIndicator(rowIndicator);
+
         for (int k = 0; k < rounds; k++) {
             ArrayList<Integer> startPositions = getStartPositions(rowIndicator, k);
             assert startPositions != null;
+
             for (int i = 0; i < rowIndicator.size(); i++) {
                 placePieceOnRow(board, row, rowIndicator.get(i), startPositions.get(i));
             }
-            printRowHint(board, row);
+            combos.add(addRowToCombos(board, row));
 
             int focusPiece = rowIndicator.size() - 1;
             int index = startPositions.get(focusPiece) + 1;
-            while (index + rowIndicator.get(focusPiece) - 1 < board.getNumberOfColumns()) {
-                clearHint(board, row, index - 1);
-                placePieceOnRow(board, row, rowIndicator.get(focusPiece), index++);
-                printRowHint(board, row);
+            if (rowIndicator.size() == 2) {
+                while (index + rowIndicator.get(focusPiece) - 1 < board.getNumberOfColumns()) {
+                    clearPossible(board, row, index - 1);
+                    placePieceOnRow(board, row, rowIndicator.get(focusPiece), index++);
+                    combos.add(addRowToCombos(board, row));
+                }
+
+                clearPossible(board, row);
+            } else {
+                clearPossible(board, row, index - 1);
+                placePieceOnRow(board, row, rowIndicator.get(focusPiece), index);
             }
-            clearHint(board, row);
         }
+        clearPossible(board, row);
+        if (rowIndicator.size() == 1) {
+            placePieceOnRow(board, row, rowIndicator.get(0), board.getNumberOfColumns() - 1);
+            combos.add(addRowToCombos(board, row));
+        }
+
+        // print some shit
+        System.out.println("*********** POSSIBLE ***********");
+        for (int i = 0; i < board.getNumberOfColumns(); i++) {
+            System.out.printf("%-10s", i);
+        }
+        System.out.println();
+        for (ArrayList<Boolean> combo : combos) {
+            for (Boolean b: combo) {
+                System.out.printf("%-10s", b);
+            }
+            System.out.println();
+        }
+
+        return combos;
+    }
+
+    private ArrayList<Boolean> addRowToCombos(Board board, int row) {
+        ArrayList<Boolean> combos = new ArrayList<>();
+        for (Square square : board.getRow(row)) {
+            combos.add(square.isPossible());
+        }
+        return combos;
     }
 
     private ArrayList<Integer> getStartPositions(ArrayList<Integer> indicator, int round) {
@@ -298,19 +363,6 @@ public class Board extends Observable implements Serializable {
         return null;
     }
 
-    private void printRowHint(Board board, int row) {
-        int i = 0;
-        for (Square square : board.getRow(row)) {
-            if (square.isPossible()) {
-                System.out.printf("%-7s", i++ + "=X");
-            } else {
-                System.out.printf("%-7s", Integer.toString(i++));
-            }
-
-        }
-        System.out.println();
-    }
-
     private Board placePieceOnRow(Board board, int row, int pieceSize, int startIndex) {
         if (startIndex + pieceSize - 1 < board.getNumberOfColumns()) {
             for (int i = 0; i < pieceSize; i++) {
@@ -321,7 +373,7 @@ public class Board extends Observable implements Serializable {
         return board;
     }
 
-    private Board clearHint(Board board, int row) {
+    private Board clearPossible(Board board, int row) {
         Square[] squares = board.getRow(row);
         for (Square square: squares) {
             square.setPossible(false);
@@ -329,7 +381,7 @@ public class Board extends Observable implements Serializable {
         return board;
     }
 
-    private Board clearHint(Board board, int row, int start) {
+    private Board clearPossible(Board board, int row, int start) {
 
         for (int i = start; i < board.getNumberOfColumns(); i++) {
             board.getSquare(row, i).setPossible(false);
