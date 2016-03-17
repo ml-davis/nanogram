@@ -3,7 +3,6 @@ package model;
 import helpers.Enums;
 import helpers.LetterMapper;
 import main.Main;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -237,6 +236,14 @@ public class Board extends Observable implements Serializable {
         return sum;
     }
 
+    private int getSumOfRowIndicator(ArrayList<Integer> row) {
+        int sum = 0;
+        for (int indicator : row) {
+            sum += indicator;
+        }
+        return sum;
+    }
+
     private int getSumOfBlackOrSelectedInRow(int row) {
         int sum = 0;
         Square[] line = this.getRow(row);
@@ -246,6 +253,89 @@ public class Board extends Observable implements Serializable {
             }
         }
         return sum;
+    }
+
+    // [2 1 3]
+    public void getRowCombos(int row) {
+        Board board = this;
+        ArrayList<Integer> rowIndicator = board.getColumnIndicator(row);
+        System.out.println(rowIndicator);
+
+        int rounds = board.getNumberOfColumns() - getSumOfRowIndicator(rowIndicator);
+        for (int k = 0; k < rounds; k++) {
+            ArrayList<Integer> startPositions = getStartPositions(rowIndicator, k);
+            assert startPositions != null;
+            for (int i = 0; i < rowIndicator.size(); i++) {
+                placePieceOnRow(board, row, rowIndicator.get(i), startPositions.get(i));
+            }
+            printRowHint(board, row);
+
+            int focusPiece = rowIndicator.size() - 1;
+            int index = startPositions.get(focusPiece) + 1;
+            while (index + rowIndicator.get(focusPiece) - 1 < board.getNumberOfColumns()) {
+                clearHint(board, row, index - 1);
+                placePieceOnRow(board, row, rowIndicator.get(focusPiece), index++);
+                printRowHint(board, row);
+            }
+            clearHint(board, row);
+        }
+    }
+
+    private ArrayList<Integer> getStartPositions(ArrayList<Integer> indicator, int round) {
+        if (indicator.size() > 0) {
+            ArrayList<Integer> startPositions = new ArrayList<>();
+            startPositions.add(round);
+
+            int sum = 0;
+            for (int i = 0; i < indicator.size() - 1; i++) {
+                sum += indicator.get(i) + 1 + round;
+                startPositions.add(sum);
+            }
+
+            return startPositions;
+        }
+
+        return null;
+    }
+
+    private void printRowHint(Board board, int row) {
+        int i = 0;
+        for (Square square : board.getRow(row)) {
+            if (square.isPossible()) {
+                System.out.printf("%-7s", i++ + "=X");
+            } else {
+                System.out.printf("%-7s", Integer.toString(i++));
+            }
+
+        }
+        System.out.println();
+    }
+
+    private Board placePieceOnRow(Board board, int row, int pieceSize, int startIndex) {
+        if (startIndex + pieceSize - 1 < board.getNumberOfColumns()) {
+            for (int i = 0; i < pieceSize; i++) {
+                Square square = board.getSquare(row, startIndex + i);
+                square.setPossible(true);
+            }
+        }
+        return board;
+    }
+
+    private Board clearHint(Board board, int row) {
+        Square[] squares = board.getRow(row);
+        for (Square square: squares) {
+            square.setPossible(false);
+        }
+        return board;
+    }
+
+    private Board clearHint(Board board, int row, int start) {
+
+        for (int i = start; i < board.getNumberOfColumns(); i++) {
+            board.getSquare(row, i).setPossible(false);
+        }
+
+        return board;
     }
 
     public ArrayList<Integer> createIndicatorList(Square[] line) {
@@ -271,6 +361,24 @@ public class Board extends Observable implements Serializable {
         int count = 0;
         for (Square square : line) {
             if (square.isBlack() || square.isUserSelected()) {
+                count++;
+            } else if (count > 0){
+                if (count > 0) {
+                    list.add(count);
+                }
+                count = 0;
+            }
+        }
+        if (count > 0)
+            list.add(count);
+        return list;
+    }
+
+    public ArrayList<Integer> createPossibleIndicatorList(Square[] line) {
+        ArrayList<Integer> list = new ArrayList<>();
+        int count = 0;
+        for (Square square : line) {
+            if (square.isBlack() || square.isUserSelected() || square.isPossible()) {
                 count++;
             } else if (count > 0){
                 if (count > 0) {

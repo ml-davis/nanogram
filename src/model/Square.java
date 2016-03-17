@@ -8,6 +8,7 @@ public class Square implements Serializable {
     private boolean flagged;
     private boolean black;
     private boolean userSelected;
+    private boolean possible;
     private String style;
 
     public Square() {
@@ -58,5 +59,13 @@ public class Square implements Serializable {
         String format = "%-10s%-10b%n%-10s%-10b%n%-10s%-10s%n%-10s%-10s%n";
         String s = String.format(format, "flagged", flagged, "black", black, "selected", userSelected, "style", style);
         return s;
+    }
+
+    public void setPossible(boolean possible) {
+        this.possible = possible;
+    }
+
+    public boolean isPossible() {
+        return possible;
     }
 }
