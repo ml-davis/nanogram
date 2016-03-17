@@ -51,7 +51,7 @@ public class SolvePageController extends Observer {
         PageLoader.launchPromptWindow(hint);
     }
 
-    public void shitClicked(int columnNumber) {
+    public void columnButtonClicked(int columnNumber) {
         final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         int numberOfRows = Main.getBoard().getNumberOfRows();
         ArrayList<ArrayList<Boolean>> validCombos = Main.getBoard().getValidRowCombos(columnNumber);
@@ -103,30 +103,5 @@ public class SolvePageController extends Observer {
                 }
             }
         }, 1, 500, TimeUnit.MILLISECONDS);
-    }
-
-    public void columnButtonClicked(int columnNumber) {
-        shitClicked(columnNumber);
-//        ArrayList<ArrayList<Boolean>> validCombos = Main.getBoard().getValidRowCombos(columnNumber);
-//
-//        for (int i = 0; i < Main.getBoard().getNumberOfRows(); i++) {
-//            ArrayList<Boolean> combos = validCombos.get(0);
-//            for (int j = 0; j < Main.getBoard().getNumberOfColumns(); j++) {
-//                if (combos.get(j)) {
-//                    Main.getBoard().setStyle(columnNumber, j, Enums.SquareColor.LIGHT_GREY);
-//                }
-//            }
-//            Main.getBoard().notifyObservers();
-//
-//            // sleep
-//
-//            for (int j = 0; j < Main.getBoard().getNumberOfColumns(); j++) {
-//                Main.getBoard().setStyle(columnNumber, j, Enums.SquareColor.WHITE);
-//            }
-//            Main.getBoard().notifyObservers();
-//
-//            // sleep
-//        }
-//        System.out.println("done");
     }
 }
