@@ -31,7 +31,7 @@ public class PageLoader {
     private MenuItem createCustom; // TODO implement this
 
     // navigates to page and returns it's object
-    public AnchorPane navigateToPage(Enums.Page page) {
+    private AnchorPane navigateToPage(Enums.Page page) {
         PageMapper mapper = new PageMapper();
         AnchorPane loadPage = null;
         try {
@@ -63,6 +63,15 @@ public class PageLoader {
     }
 
     @FXML
+    public void goBackToCreatorPageOne() {
+        Board board = Main.getBoard();
+        AnchorPane creatorPageOne = navigateToPage(Enums.Page.CREATOR_PAGE_ONE);
+        CreatorOneController boardPane = new CreatorOneController(board.getNumberOfColumns(), board.getNumberOfRows());
+        createBoard(creatorPageOne, board, boardPane);
+        board.notifyObservers();
+    }
+
+    @FXML
     public void loadCreatorPageTwo() {
         AnchorPane creatorPageTwo = navigateToPage(Enums.Page.CREATOR_PAGE_TWO);
         int numberOfRows = Main.getBoard().getNumberOfRows();
@@ -81,7 +90,7 @@ public class PageLoader {
             Board board = new Board(boardSize, boardSize);
             board = board.randomFillBoard();
             createBoard(solvePage, board, controller);
-            Main.getBoard().notifyObservers();
+            board.notifyObservers();
             int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
             GridPane grid = (GridPane) solvePage.lookup("#boardPane");
             addRowLabels(boardSize, grid, cellSize);
@@ -91,6 +100,8 @@ public class PageLoader {
     }
 
     public void addRowLabels(int numberOfRows, GridPane grid, int cellSize) {
+        Board board = Main.getBoard();
+        SolvePageController controller = new SolvePageController(board.getNumberOfRows(), board.getNumberOfColumns());
         for (int i = 0; i < numberOfRows; i++) {
             HBox hBox = new HBox();
             hBox.setAlignment(Pos.CENTER_LEFT);
@@ -98,13 +109,18 @@ public class PageLoader {
             Button rowButton = new Button(Character.toString(rowLetter));
             rowButton.setId("lineLabel");
             rowButton.setPrefSize(cellSize * .6, cellSize);
+            final int finalI = i;
+            rowButton.setOnAction(e -> {
+                controller.columnButtonClicked(finalI);
+            });
             hBox.getChildren().add(rowButton);
             grid.add(hBox, numberOfRows + 1, i + 1);
         }
     }
 
     public void addColumnLabels(int numberOfColumns, GridPane grid, int cellSize) {
-        SolvePageController controller = new SolvePageController(numberOfColumns, numberOfColumns);
+        Board board = Main.getBoard();
+        SolvePageController controller = new SolvePageController(board.getNumberOfRows(), board.getNumberOfColumns());
         for (int i = 0; i < numberOfColumns; i++) {
             VBox vBox = new VBox();
             vBox.setAlignment(Pos.TOP_CENTER);
@@ -170,12 +186,12 @@ public class PageLoader {
             for (int j = 0; j < numberOfColumns; j++) {
                 final int finalI = i, finalJ = j;
                 Button square = new Button("");
-                square.setStyle(board.getStyle(i, j));
+                square.setStyle(board.getStyle(j, i));
                 square.setPadding(new Insets(0, 0, 0, 0));
                 square.setPrefSize(cellSize, cellSize);
-                square.setId(i + "" + j);
-                square.setOnAction(e -> boardPane.toggleCell(finalI, finalJ));
-                grid.add(square, i+1, j+1);
+                square.setId(j + "" + i);
+                square.setOnAction(e -> boardPane.toggleCell(finalJ, finalI));
+                grid.add(square, j+1, i+1);
                 boardPane.setSquare(square, i, j);
             }
         }
@@ -203,7 +219,7 @@ public class PageLoader {
             vBox[i] = new VBox();
             vBox[i].setAlignment(Pos.BOTTOM_CENTER);
             vBox[i].setPrefHeight(130);
-            grid.add(vBox[i], i+1, 0);
+            grid.add(vBox[i], i + 1, 0);
         }
         boardPane.setColumnIndicators(vBox);
     }

@@ -26,7 +26,7 @@
         </GridPane>
 
         <HBox spacing="10">
-            <Button text="Cancel"/>
+            <Button text="Cancel" onAction="#loadFrontPage"/>
             <Button text="Next Step" onAction="#loadCreatorPageTwo"/>
         </HBox>
     </VBox>

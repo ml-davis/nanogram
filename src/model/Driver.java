@@ -10,7 +10,6 @@ public class Driver {
         board.toggleFlag(0, 9);
         board.toggleBlack(0, 9);
 
-
         board.getValidRowCombos(0);
     }
 }

@@ -1,15 +1,16 @@
 package controller;
 
+//import javafx.animation.AnimationTimer;
+//import javafx.application.Platform;
+//import javafx.scene.Node;
+//import java.util.ArrayList;
+//import java.util.concurrent.Executors;
+//import java.util.concurrent.ScheduledExecutorService;
+//import java.util.concurrent.TimeUnit;
 import helpers.Enums;
-import javafx.animation.AnimationTimer;
-import javafx.application.Platform;
-import javafx.scene.Node;
 import main.Main;
+import model.Board;
 
-import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class SolvePageController extends Observer {
 
@@ -18,29 +19,34 @@ public class SolvePageController extends Observer {
     }
 
     @Override
-    public void toggleCell(int row, int column) {
+    public void toggleCell(int column, int row) {
+
         // update back end
-        if (!Main.getBoard().isBlack(row, column) && !Main.getBoard().isUserSelected(row, column)) {
-            Main.getBoard().toggleUserSelected(row, column);
-            Main.getBoard().setStyle(row, column, Enums.SquareColor.DARK_GREY);
-        } else if (!Main.getBoard().isBlack(row, column) && Main.getBoard().isUserSelected(row, column)) {
-            Main.getBoard().toggleUserSelected(row, column);
-            Main.getBoard().setStyle(row, column, Enums.SquareColor.WHITE);
+        Board board = Main.getBoard();
+        if (!board.isBlack(column, row) && !board.isUserSelected(column, row)) {
+            board.toggleUserSelected(column, row);
+            board.setStyle(column, row, Enums.SquareColor.DARK_GREY);
+
+        } else if (!board.isBlack(column, row) && board.isUserSelected(column, row)) {
+            board.toggleUserSelected(column, row);
+            board.setStyle(column, row, Enums.SquareColor.WHITE);
+
         }
 
         // print some stuff for debugging purposes
-        System.out.println("Row " + (column + 1) + ", Column " + (row + 1));
-        System.out.println(Main.getBoard().getSquare(row, column).getStateString());
+        System.out.println("Column " + (column + 1) + ", Row " + (row + 1));
+        System.out.println(board.getSquare(column, row).getStateString());
 
-        Main.getBoard().notifyObservers();
+        board.notifyObservers();
     }
 
     public void verifyPuzzle() {
+        Board board = Main.getBoard();
         String message;
-        if (Main.getBoard().isSolved()) {
+        if (board.isSolved()) {
             message = "Congratulations! You solved the puzzle!";
         } else {
-          message = Main.getBoard().getErrorMessage();
+          message = board.getErrorMessage();
         }
         PageLoader.launchPromptWindow(message);
     }
@@ -51,57 +57,63 @@ public class SolvePageController extends Observer {
         PageLoader.launchPromptWindow(hint);
     }
 
+    public void rowButtonClicked(int rowNumber) {
+        PageLoader.launchPromptWindow("Under construction");
+    }
+
     public void columnButtonClicked(int columnNumber) {
-        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        int numberOfRows = Main.getBoard().getNumberOfRows();
-        ArrayList<ArrayList<Boolean>> validCombos = Main.getBoard().getValidRowCombos(columnNumber);
 
-        scheduler.scheduleAtFixedRate(new Runnable() {
-            int counter = 0;
-            boolean clear = true;
+        PageLoader.launchPromptWindow("Under construction");
 
-            @Override
-            public void run() {
-                if (counter < validCombos.size() && clear) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (counter < validCombos.size()) {
-                                ArrayList<Boolean> combos = validCombos.get(counter++);
-                                for (int j = 0; j < Main.getBoard().getNumberOfColumns(); j++) {
-                                    if (combos.get(j) && !Main.getBoard().isBlack(columnNumber, j) && !Main.getBoard().isUserSelected(columnNumber, j)) {
-                                        Main.getBoard().setStyle(columnNumber, j, Enums.SquareColor.LIGHT_GREY);
-                                    }
-                                }
-                                Main.getBoard().notifyObservers();
-                            }
-                            clear = false;
-                        }
-                    });
-                } else if (counter <= numberOfRows && !clear) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (int j = 0; j < Main.getBoard().getNumberOfColumns(); j++) {
-                                if (!Main.getBoard().isBlack(columnNumber, j) && !Main.getBoard().isUserSelected(columnNumber, j)) {
-                                    Main.getBoard().setStyle(columnNumber, j, Enums.SquareColor.WHITE);
-                                }
-                            }
-                            Main.getBoard().notifyObservers();
-                            clear = true;
-                        }
-                    });
-                } else {
-                    scheduler.shutdown();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            System.out.println("Ending animation");
-                            Main.getBoard().resetColors();
-                        }
-                    });
-                }
-            }
-        }, 1, 500, TimeUnit.MILLISECONDS);
+//        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+//        int numberOfRows = Main.getBoard().getNumberOfRows();
+//        ArrayList<ArrayList<Boolean>> validCombos = Main.getBoard().getValidRowCombos(columnNumber);
+//
+//        scheduler.scheduleAtFixedRate(new Runnable() {
+//            int counter = 0;
+//            boolean clear = true;
+//
+//            @Override
+//            public void run() {
+//                if (counter < validCombos.size() && clear) {
+//                    Platform.runLater(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (counter < validCombos.size()) {
+//                                ArrayList<Boolean> combos = validCombos.get(counter++);
+//                                for (int j = 0; j < Main.getBoard().getNumberOfColumns(); j++) {
+//                                    if (combos.get(j) && !Main.getBoard().isBlack(columnNumber, j) && !Main.getBoard().isUserSelected(columnNumber, j)) {
+//                                        Main.getBoard().setStyle(columnNumber, j, Enums.SquareColor.LIGHT_GREY);
+//                                    }
+//                                }
+//                                Main.getBoard().notifyObservers();
+//                            }
+//                            clear = false;
+//                        }
+//                    });
+//                } else if (counter <= validCombos.size() && !clear) {
+//                    Platform.runLater(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            for (int j = 0; j < Main.getBoard().getNumberOfColumns(); j++) {
+//                                if (!Main.getBoard().isBlack(columnNumber, j) && !Main.getBoard().isUserSelected(columnNumber, j)) {
+//                                    Main.getBoard().setStyle(columnNumber, j, Enums.SquareColor.WHITE);
+//                                }
+//                            }
+//                            Main.getBoard().notifyObservers();
+//                            clear = true;
+//                        }
+//                    });
+//                } else {
+//                    scheduler.shutdown();
+//                    Platform.runLater(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            System.out.println("Ending animation");
+//                        }
+//                    });
+//                }
+//            }
+//        }, 1, 500, TimeUnit.MILLISECONDS);
     }
 }

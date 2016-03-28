@@ -16,9 +16,9 @@ public class Board extends Observable implements Serializable {
     private HashMap<Integer, ArrayList<Integer>> rowIndicator;
     private HashMap<Integer, ArrayList<Integer>> columnIndicator;
 
-    public Board(int numberOfRows, int numberOfColumns) {
-        this.numberOfRows = numberOfRows;
+    public Board(int numberOfColumns, int numberOfRows) {
         this.numberOfColumns = numberOfColumns;
+        this.numberOfRows = numberOfRows;
         board = new Square[numberOfRows][numberOfColumns];
         for (int i = 0; i < numberOfRows; i++) {
             for (int j = 0; j < numberOfColumns; j++) {
@@ -36,17 +36,17 @@ public class Board extends Observable implements Serializable {
         }
     }
 
-    public void toggleFlag(int row, int column) {
+    public void toggleFlag(int column, int row) {
         board[row][column].toggleFlag();
-        this.rowIndicator.put(column, createIndicatorList(getColumn(column)));
-        this.columnIndicator.put(row, createIndicatorList(getRow(row)));
+        this.rowIndicator.put(row, createIndicatorList(getRow(row)));
+        this.columnIndicator.put(column, createIndicatorList(getColumn(column)));
     }
 
-    public void toggleBlack(int row, int column) {
+    public void toggleBlack(int column, int row) {
         board[row][column].toggleBlack();
     }
 
-    public void toggleUserSelected(int row, int column) {
+    public void toggleUserSelected(int column, int row) {
         board[row][column].toggleUserSelected();
     }
 
@@ -78,11 +78,11 @@ public class Board extends Observable implements Serializable {
             System.out.println("col = " + column);
             if (i < amountOfSpacesBlack) {
                 System.out.println("toggle black");
-                this.toggleBlack(row, column);
-                this.setStyle(row, column, Enums.SquareColor.BLACK);
+                this.toggleBlack(column, row);
+                this.setStyle(column, row, Enums.SquareColor.BLACK);
             }
             System.out.println("toggle flag");
-            this.toggleFlag(row, column);
+            this.toggleFlag(column, row);
             System.out.println();
         }
 
@@ -97,7 +97,7 @@ public class Board extends Observable implements Serializable {
 
     private boolean areColumnsSolved(Board board) {
         for (int i = 0; i < board.getNumberOfColumns(); i++) {
-            ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(i));
+            ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(i));
             ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(i);
             System.out.println("u: " + userIndicator);
             System.out.println("s: " + solutionIndicator);
@@ -111,7 +111,7 @@ public class Board extends Observable implements Serializable {
 
     private boolean areRowsSolved(Board board) {
         for (int i = 0; i < board.getNumberOfRows(); i++) {
-            ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(i));
+            ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(i));
             ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(i);
             System.out.println("u: " + userIndicator);
             System.out.println("s: " + solutionIndicator);
@@ -128,19 +128,19 @@ public class Board extends Observable implements Serializable {
         ArrayList<Integer> errorRows = getErrorRows(this);
         String errorMessage = "There was an error in your solution. Check in\n";
 
-        if (errorRows.size() > 0) {
-            errorMessage += "Rows:\t";
-        }
-        for (Integer errorRow : errorRows) {
-            errorMessage += LetterMapper.mapToLetter(errorRow + 1) + " ";
-        }
-        errorMessage += "\n";
-
         if (errorColumns.size() > 0) {
             errorMessage += "Columns: \t";
         }
         for (Integer errorColumn : errorColumns) {
             errorMessage += LetterMapper.mapToLetter(errorColumn + 1) + " ";
+        }
+        errorMessage += "\n";
+
+        if (errorRows.size() > 0) {
+            errorMessage += "Rows:\t";
+        }
+        for (Integer errorRow : errorRows) {
+            errorMessage += LetterMapper.mapToLetter(errorRow + 1) + " ";
         }
         errorMessage += "\n";
 
@@ -150,7 +150,7 @@ public class Board extends Observable implements Serializable {
     private ArrayList<Integer> getErrorColumns(Board board) {
         ArrayList<Integer> errorColumns = new ArrayList<>(board.getNumberOfColumns());
         for (int i = 0; i < board.getNumberOfColumns(); i++) {
-            ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(i));
+            ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(i));
             ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(i);
             if (!userIndicator.equals(solutionIndicator)) {
                 errorColumns.add(i);
@@ -162,7 +162,7 @@ public class Board extends Observable implements Serializable {
     private ArrayList<Integer> getErrorRows(Board board) {
         ArrayList<Integer> errorRows = new ArrayList<>(board.getNumberOfRows());
         for (int i = 0; i < board.getNumberOfRows(); i++) {
-            ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(i));
+            ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(i));
             ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(i);
             if (!userIndicator.equals(solutionIndicator)) {
                 errorRows.add(i);
@@ -173,23 +173,26 @@ public class Board extends Observable implements Serializable {
 
     public String getHint() {
         HashMap<String, Double> percentageFilled = new HashMap<>();
+        int sumOfIndicator;
+        int sumOfBlack;
+
         for (int i = 0; i < this.getNumberOfColumns(); i++) {
-            int sumOfIndicator = getSumOfColumnIndicator(i);
-            int sumOfBlack = getSumOfBlackOrSelectedInRow(i);
+            sumOfIndicator = getSumOfColumnIndicator(i);
+            sumOfBlack = getSumOfBlackOrSelectedInColumn(i);
             percentageFilled.put("Column " + LetterMapper.mapToLetter(i + 1), (double) sumOfBlack / sumOfIndicator);
         }
         for (int i = 0; i < this.getNumberOfRows(); i++) {
-            int sumOfIndicator = getSumOfRowIndicator(i);
-            int sumOfBlack = getSumOfBlackOrSelectedInColumn(i);
+            sumOfIndicator = getSumOfRowIndicator(i);
+            sumOfBlack = getSumOfBlackOrSelectedInRow(i);
             percentageFilled.put("Row " + LetterMapper.mapToLetter(i + 1), (double) sumOfBlack / sumOfIndicator);
         }
 
         System.out.println(percentageFilled);
 
-        return getHighestLine(percentageFilled);
+        return getBestLine(percentageFilled);
     }
 
-    private String getHighestLine(HashMap<String, Double> map) {
+    private String getBestLine(HashMap<String, Double> map) {
         String highestLine = "";
         double highestValue = 0;
         for (Map.Entry<String, Double> entry : map.entrySet()) {
@@ -255,6 +258,121 @@ public class Board extends Observable implements Serializable {
         return sum;
     }
 
+    private ArrayList<Integer> createIndicatorList(Square[] line) {
+        ArrayList<Integer> list = new ArrayList<>();
+        int count = 0;
+        for (Square square : line) {
+            if (square.isFlagged()) {
+                count++;
+            } else if (count > 0){
+                if (count > 0) {
+                    list.add(count);
+                }
+                count = 0;
+            }
+        }
+        if (count > 0)
+            list.add(count);
+        return list;
+    }
+
+    private ArrayList<Integer> createUserIndicatorList(Square[] line) {
+        ArrayList<Integer> list = new ArrayList<>();
+        int count = 0;
+        for (Square square : line) {
+            if (square.isBlack() || square.isUserSelected()) {
+                count++;
+            } else if (count > 0){
+                if (count > 0) {
+                    list.add(count);
+                }
+                count = 0;
+            }
+        }
+        if (count > 0)
+            list.add(count);
+        return list;
+    }
+
+    private ArrayList<Integer> createPossibleIndicatorList(Square[] line) {
+        ArrayList<Integer> list = new ArrayList<>();
+        int count = 0;
+        for (Square square : line) {
+            if (square.isBlack() || square.isUserSelected() || square.isPossible()) {
+                count++;
+            } else if (count > 0){
+                if (count > 0) {
+                    list.add(count);
+                }
+                count = 0;
+            }
+        }
+        if (count > 0)
+            list.add(count);
+        return list;
+    }
+
+    public boolean isFlagged(int column, int row) {
+        return board[row][column].isFlagged();
+    }
+
+    public boolean isBlack(int column, int row) {
+        return board[row][column].isBlack();
+    }
+
+    public boolean isUserSelected(int column, int row) {
+        return board[row][column].isUserSelected();
+    }
+
+    public void setStyle(int column, int row, Enums.SquareColor color) {
+        board[row][column].setStyle(color);
+    }
+
+    public String getStyle(int column, int row) {
+        return board[row][column].getStyle();
+    }
+
+    public ArrayList<Integer> getRowIndicator(int row) {
+        return rowIndicator.get(row);
+    }
+
+    public ArrayList<Integer> getColumnIndicator(int column) {
+        return columnIndicator.get(column);
+    }
+
+    public int getNumberOfRows() {
+        return numberOfRows;
+    }
+
+    public int getNumberOfColumns() {
+        return numberOfColumns;
+    }
+
+    private Square[] getRow(int row) {
+        return board[row];
+    }
+
+    private Square[] getColumn(int column) {
+        Square[] col = new Square[this.numberOfRows];
+        for (int i = 0; i < this.numberOfRows; i++) {
+            col[i] = board[i][column];
+        }
+        return col;
+    }
+
+    public Square getSquare(int column, int row) {
+        return board[row][column];
+    }
+
+
+
+    /*
+     *
+     *  Fucked up algorithms start here
+     *
+     */
+
+    // todo replace this method
     public ArrayList<ArrayList<Boolean>> getValidRowCombos(int row) {
         Board board = this;
         ArrayList<Integer> rowIndicator = board.getColumnIndicator(row);
@@ -289,7 +407,7 @@ public class Board extends Observable implements Serializable {
         return validCombos;
     }
 
-    // [2 1 3]
+    // todo replace this method
     public ArrayList<ArrayList<Boolean>> getRowCombos(Board board, int row) {
         ArrayList<Integer> rowIndicator = board.getColumnIndicator(row);
         System.out.println("Indicator: " + rowIndicator);
@@ -341,6 +459,7 @@ public class Board extends Observable implements Serializable {
         return combos;
     }
 
+    // todo replace this method
     private ArrayList<Boolean> addRowToCombos(Board board, int row) {
         ArrayList<Boolean> combos = new ArrayList<>();
         for (Square square : board.getRow(row)) {
@@ -349,6 +468,7 @@ public class Board extends Observable implements Serializable {
         return combos;
     }
 
+    // todo replace this method
     private ArrayList<Integer> getStartPositions(ArrayList<Integer> indicator, int round) {
         if (indicator.size() > 0) {
             ArrayList<Integer> startPositions = new ArrayList<>();
@@ -366,6 +486,7 @@ public class Board extends Observable implements Serializable {
         return null;
     }
 
+    // todo replace this method
     private Board placePieceOnRow(Board board, int row, int pieceSize, int startIndex) {
         if (startIndex + pieceSize - 1 < board.getNumberOfColumns()) {
             for (int i = 0; i < pieceSize; i++) {
@@ -376,6 +497,18 @@ public class Board extends Observable implements Serializable {
         return board;
     }
 
+    // todo replace this method
+    private Board placePieceOnColumn(Board board, int column, int pieceSize, int startIndex) {
+        if (startIndex + pieceSize - 1 < board.getNumberOfColumns()) {
+            for (int i = 0; i < pieceSize; i++) {
+                Square square = board.getSquare(startIndex + i, column);
+                square.setPossible(true);
+            }
+        }
+        return board;
+    }
+
+    // todo replace this method
     private Board clearPossible(Board board, int row) {
         Square[] squares = board.getRow(row);
         for (Square square: squares) {
@@ -384,8 +517,17 @@ public class Board extends Observable implements Serializable {
         return board;
     }
 
-    private Board clearPossible(Board board, int row, int start) {
+    // todo replace this method
+    private Board clearPossible(Board board, int column, boolean isColumn) {
+        Square[] squares = board.getColumn(column);
+        for (Square square: squares) {
+            square.setPossible(false);
+        }
+        return board;
+    }
 
+    // todo replace this method
+    private Board clearPossible(Board board, int row, int start) {
         for (int i = start; i < board.getNumberOfColumns(); i++) {
             board.getSquare(row, i).setPossible(false);
         }
@@ -393,130 +535,14 @@ public class Board extends Observable implements Serializable {
         return board;
     }
 
-    public ArrayList<Integer> createIndicatorList(Square[] line) {
-        ArrayList<Integer> list = new ArrayList<>();
-        int count = 0;
-        for (Square square : line) {
-            if (square.isFlagged()) {
-                count++;
-            } else if (count > 0){
-                if (count > 0) {
-                    list.add(count);
-                }
-                count = 0;
-            }
+    // todo replace this method
+    private Board clearPossible(Board board, int row, int start, boolean isColumn) {
+
+        for (int i = start; i < board.getNumberOfColumns(); i++) {
+            board.getSquare(row, i).setPossible(false);
         }
-        if (count > 0)
-            list.add(count);
-        return list;
-    }
 
-    public void resetColors() {
-        for (int i = 0; i < this.getNumberOfRows(); i++) {
-            for (int j = 0; j < this.getNumberOfColumns(); j++) {
-                Square square = this.getSquare(i, j);
-                if (square.isBlack()) {
-                    square.setStyle(Enums.SquareColor.BLACK);
-                } else if (square.isUserSelected()) {
-                    square.setStyle(Enums.SquareColor.DARK_GREY);
-                } else {
-                    square.setStyle(Enums.SquareColor.WHITE);
-                }
-            }
-        }
-        this.notifyObservers();
-    }
-
-    public ArrayList<Integer> createUserIndicatorList(Square[] line) {
-        ArrayList<Integer> list = new ArrayList<>();
-        int count = 0;
-        for (Square square : line) {
-            if (square.isBlack() || square.isUserSelected()) {
-                count++;
-            } else if (count > 0){
-                if (count > 0) {
-                    list.add(count);
-                }
-                count = 0;
-            }
-        }
-        if (count > 0)
-            list.add(count);
-        return list;
-    }
-
-    public ArrayList<Integer> createPossibleIndicatorList(Square[] line) {
-        ArrayList<Integer> list = new ArrayList<>();
-        int count = 0;
-        for (Square square : line) {
-            if (square.isBlack() || square.isUserSelected() || square.isPossible()) {
-                count++;
-            } else if (count > 0){
-                if (count > 0) {
-                    list.add(count);
-                }
-                count = 0;
-            }
-        }
-        if (count > 0)
-            list.add(count);
-        return list;
-    }
-
-    public boolean isFlagged(int row, int column) {
-        return board[row][column].isFlagged();
-    }
-
-    public boolean isBlack(int row, int column) {
-        return board[row][column].isBlack();
-    }
-
-    public boolean isUserSelected(int row, int column) { return board[row][column].isUserSelected(); }
-
-    public void setStyle(int row, int column, Enums.SquareColor color) {
-        board[row][column].setStyle(color);
-    }
-
-    public String getStyle(int row, int column) { return board[row][column].getStyle(); }
-
-    public HashMap<Integer, ArrayList<Integer>> getRowIndicatorMap() {
-        return rowIndicator;
-    }
-
-    public HashMap<Integer, ArrayList<Integer>> getColumnIndicatorMap() {
-        return columnIndicator;
-    }
-
-    public ArrayList<Integer> getRowIndicator(int row) {
-        return rowIndicator.get(row);
-    }
-
-    public ArrayList<Integer> getColumnIndicator(int column) {
-        return columnIndicator.get(column);
-    }
-
-    public int getNumberOfRows() {
-        return numberOfRows;
-    }
-
-    public int getNumberOfColumns() {
-        return numberOfColumns;
-    }
-
-    public Square[] getRow(int row) {
-        return board[row];
-    }
-
-    public Square[] getColumn(int column) {
-        Square[] col = new Square[board.length];
-        for (int i = 0; i < board.length; i++) {
-            col[i] = board[i][column];
-        }
-        return col;
-    }
-
-    public Square getSquare(int row, int column) {
-        return board[row][column];
+        return board;
     }
 
 }

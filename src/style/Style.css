@@ -19,10 +19,12 @@ Text {
 }
 
 #lineLabel {
+    -fx-text-fill: #333333;
     -fx-font-family: "Arial Narrow";
     -fx-font-size: 10;
     -fx-background-radius: 0, 0, 0;
     -fx-padding: 0;
+    -fx-background-color: linear-gradient(#789EE9, #688ED9);
 }
 
 .button {

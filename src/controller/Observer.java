@@ -5,6 +5,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import main.Main;
+import model.Board;
 
 import java.util.ArrayList;
 
@@ -15,8 +16,8 @@ public abstract class Observer {
 
     public Observer(int numberOfRows, int numberOfColumns) {
         squares = new Button[numberOfRows][numberOfColumns];
-        columnIndicators = new VBox[numberOfColumns];
-        rowIndicators = new HBox[numberOfRows];
+        columnIndicators = new VBox[numberOfRows];
+        rowIndicators = new HBox[numberOfColumns];
     }
 
     public void update() {
@@ -25,24 +26,25 @@ public abstract class Observer {
         updateRowIndicators();
     }
 
-    public abstract void toggleCell(int row, int column);
+    public abstract void toggleCell(int column, int row);
 
-    public void setSquare(Button square, int row, int column) {
+    public void setSquare(Button square, int column, int row) {
         squares[row][column] = square;
     }
 
-    public void setColumnIndicators(VBox[] vbox) {
-        columnIndicators = vbox;
+    public void setColumnIndicators(VBox[] vBox) {
+        columnIndicators = vBox;
     }
 
-    public void setRowIndicators(HBox[] hbox) {
-        rowIndicators = hbox;
+    public void setRowIndicators(HBox[] hBox) {
+        rowIndicators = hBox;
     }
 
     private void updateSquares() {
-        for (int i = 0; i < Main.getBoard().getNumberOfRows(); i++) {
-            for (int j = 0; j < Main.getBoard().getNumberOfColumns(); j++) {
-                squares[i][j].setStyle(Main.getBoard().getStyle(i, j));
+        Board board = Main.getBoard();
+        for (int i = 0; i < board.getNumberOfRows(); i++) {
+            for (int j = 0; j < board.getNumberOfColumns(); j++) {
+                squares[i][j].setStyle(board.getStyle(i, j));
             }
         }
     }
