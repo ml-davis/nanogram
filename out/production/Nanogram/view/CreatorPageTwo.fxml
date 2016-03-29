@@ -27,7 +27,7 @@
 
         <HBox spacing="10">
             <Button text="Back" onAction="#goBackToCreatorPageOne"/>
-            <Button text="Save"/> <!-- TODO implement save feature -->
+            <Button text="Save" onAction="#loadSaveWindow"/>
         </HBox>
     </VBox>
 

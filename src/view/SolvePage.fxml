@@ -26,7 +26,7 @@
         </GridPane>
 
         <HBox spacing="10">
-            <Button text="Cancel"/> <!-- TODO implement cancel button -->
+            <Button text="Cancel" onAction="#loadFrontPage"/>
             <Button text="Verify" onAction="#verifyPuzzle"/>
             <Button text="Get Hint" onAction="#getHint"/>
         </HBox>

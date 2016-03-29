@@ -1,0 +1,23 @@
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Button?>
+
+<?import javafx.geometry.Insets?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SavePageController">
+    <GridPane hgap="30" vgap="20" alignment="CENTER">
+        <padding>
+            <Insets top="25" right="75" bottom="25" left="75"/>
+        </padding>
+
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"
+               text="What do you want to name your puzzle?"/>
+
+        <Label GridPane.columnIndex="0" GridPane.rowIndex="1" text="Name"/>
+        <TextField fx:id="nameField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Button GridPane.columnIndex="0" GridPane.rowIndex="2" onAction="#cancelButtonClicked" text="Cancel" />
+        <Button GridPane.columnIndex="1" GridPane.rowIndex="2" onAction="#saveButtonClicked" text="Confirm"/>
+    </GridPane>
+</AnchorPane>

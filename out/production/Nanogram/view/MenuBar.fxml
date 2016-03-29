@@ -20,9 +20,9 @@
                     <MenuItem text="Solve 20x20 (hard)" fx:id="solveTwenty" onAction="#loadSolvePage"/>
                 </Menu>
 
-                <Menu text="Solve Saved Puzzle">
-                    <MenuItem text="There are no puzzles available"/>
-                </Menu>
+
+                <!-- saved puzzles are populated in main method -->
+
             </items>
         </Menu>
         <Menu text="Settings">

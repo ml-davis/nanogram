@@ -1,6 +1,7 @@
 package controller;
 
 import helpers.Enums;
+import helpers.FileManager;
 import helpers.LetterMapper;
 import helpers.PageMapper;
 import javafx.event.ActionEvent;
@@ -8,14 +9,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,6 +29,8 @@ public class PageLoader {
     public GridPane boardPane;
     @FXML
     private MenuItem createFive, createThirteen, createTwenty, solveFive, solveThirteen, solveTwenty;
+    @FXML
+    private Menu savedPuzzles;
     @FXML
     private MenuItem createCustom; // TODO implement this
 
@@ -48,6 +52,7 @@ public class PageLoader {
 
     @FXML
     public void loadFrontPage() {
+        addSavedPuzzlesToMenuBar();
         AnchorPane frontPage = navigateToPage(Enums.Page.FRONT_PAGE);
     }
 
@@ -97,6 +102,21 @@ public class PageLoader {
             addColumnLabels(boardSize, grid, cellSize);
         }
 
+    }
+
+    @FXML
+    public void loadSaveWindow() {
+        Stage stage = new Stage();
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../view/SavePage.fxml"));
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Save Window");
+            stage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void addRowLabels(int numberOfRows, GridPane grid, int cellSize) {
@@ -149,6 +169,58 @@ public class PageLoader {
         SolvePageController controller = new SolvePageController(Main.getBoard().getNumberOfRows(),
                 Main.getBoard().getNumberOfColumns());
         controller.getHint();
+    }
+
+//    AnchorPane creatorPageOne = navigateToPage(Enums.Page.CREATOR_PAGE_ONE);
+//    int boardSize = getBoardSize(event);
+//    CreatorOneController boardPane = new CreatorOneController(boardSize, boardSize);
+//    if (boardSize > 0) {
+//        Board board = new Board(boardSize, boardSize);
+//        createBoard(creatorPageOne, board, boardPane);
+//    }
+
+//    board.attach(boardPane);
+//    GridPane grid = (GridPane) page.lookup("#boardPane");
+//
+//    int numberOfRows = board.getNumberOfRows();
+//    int numberOfColumns = board.getNumberOfColumns();
+//    int cellSize = getCellSize(max(numberOfRows, numberOfColumns));
+//
+//    // add squares
+//    for (int i = 0; i < numberOfRows; i++) {
+//        for (int j = 0; j < numberOfColumns; j++) {
+//            final int finalI = i, finalJ = j;
+//            Button square = new Button("");
+//            square.setStyle(board.getStyle(j, i));
+//            square.setPadding(new Insets(0, 0, 0, 0));
+//            square.setPrefSize(cellSize, cellSize);
+//            square.setId(j + "" + i);
+//            square.setOnAction(e -> boardPane.toggleCell(finalJ, finalI));
+//            grid.add(square, j+1, i+1);
+//            boardPane.setSquare(square, i, j);
+//        }
+//    }
+//
+//    addColumnIndicators(numberOfColumns, grid, boardPane);
+//    addRowIndicators(numberOfRows, grid, boardPane);
+//
+//    Main.setBoard(board);
+
+    @FXML
+    public void addSavedPuzzlesToMenuBar() {
+        /*
+         *
+         *
+         *  fix me !!!!!!!!!!!!!!!!
+         *
+         *
+         *
+         */
+
+
+
+
+
     }
 
     public static void launchPromptWindow(String message) {
