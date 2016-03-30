@@ -171,41 +171,6 @@ public class PageLoader {
         controller.getHint();
     }
 
-//    AnchorPane creatorPageOne = navigateToPage(Enums.Page.CREATOR_PAGE_ONE);
-//    int boardSize = getBoardSize(event);
-//    CreatorOneController boardPane = new CreatorOneController(boardSize, boardSize);
-//    if (boardSize > 0) {
-//        Board board = new Board(boardSize, boardSize);
-//        createBoard(creatorPageOne, board, boardPane);
-//    }
-
-//    board.attach(boardPane);
-//    GridPane grid = (GridPane) page.lookup("#boardPane");
-//
-//    int numberOfRows = board.getNumberOfRows();
-//    int numberOfColumns = board.getNumberOfColumns();
-//    int cellSize = getCellSize(max(numberOfRows, numberOfColumns));
-//
-//    // add squares
-//    for (int i = 0; i < numberOfRows; i++) {
-//        for (int j = 0; j < numberOfColumns; j++) {
-//            final int finalI = i, finalJ = j;
-//            Button square = new Button("");
-//            square.setStyle(board.getStyle(j, i));
-//            square.setPadding(new Insets(0, 0, 0, 0));
-//            square.setPrefSize(cellSize, cellSize);
-//            square.setId(j + "" + i);
-//            square.setOnAction(e -> boardPane.toggleCell(finalJ, finalI));
-//            grid.add(square, j+1, i+1);
-//            boardPane.setSquare(square, i, j);
-//        }
-//    }
-//
-//    addColumnIndicators(numberOfColumns, grid, boardPane);
-//    addRowIndicators(numberOfRows, grid, boardPane);
-//
-//    Main.setBoard(board);
-
     @FXML
     public static void addSavedPuzzlesToMenuBar() {
         Main.setSavedPuzzlesMenu(new Menu("Solve Saved Puzzles"));

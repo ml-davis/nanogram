@@ -95,12 +95,7 @@ public class Board extends Observable implements Serializable {
 
     private boolean areColumnsSolved(Board board) {
         for (int i = 0; i < board.getNumberOfColumns(); i++) {
-            ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(i));
-            ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(i);
-            System.out.println("u: " + userIndicator);
-            System.out.println("s: " + solutionIndicator);
-            System.out.println();
-            if (!userIndicator.equals(solutionIndicator)) {
+            if (!isColumnSolved(i)) {
                 return false;
             }
         }
@@ -109,16 +104,25 @@ public class Board extends Observable implements Serializable {
 
     private boolean areRowsSolved(Board board) {
         for (int i = 0; i < board.getNumberOfRows(); i++) {
-            ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(i));
-            ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(i);
-            System.out.println("u: " + userIndicator);
-            System.out.println("s: " + solutionIndicator);
-            System.out.println();
-            if (!userIndicator.equals(solutionIndicator)) {
+            if (!isRowSolved(i)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private boolean isRowSolved(int row) {
+        ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(row));
+        ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(row);
+
+        return userIndicator.equals(solutionIndicator);
+    }
+
+    private boolean isColumnSolved(int column) {
+        ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(column));
+        ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(column);
+
+        return userIndicator.equals(solutionIndicator);
     }
 
     public String getErrorMessage() {
@@ -170,42 +174,40 @@ public class Board extends Observable implements Serializable {
     }
 
     public String getHint() {
-        HashMap<String, Double> percentageFilled = new HashMap<>();
-        int sumOfIndicator;
-        int sumOfBlack;
+        HashMap<String, Integer> lines = new HashMap<>();
+        ArrayList<ArrayList<Boolean>> combos;
 
         for (int i = 0; i < this.getNumberOfColumns(); i++) {
-            sumOfIndicator = getSumOfColumnIndicator(i);
-            sumOfBlack = getSumOfBlackOrSelectedInColumn(i);
-            percentageFilled.put("Column " + LetterMapper.mapToLetter(i + 1), (double) sumOfBlack / sumOfIndicator);
-        }
-        for (int i = 0; i < this.getNumberOfRows(); i++) {
-            sumOfIndicator = getSumOfRowIndicator(i);
-            sumOfBlack = getSumOfBlackOrSelectedInRow(i);
-            percentageFilled.put("Row " + LetterMapper.mapToLetter(i + 1), (double) sumOfBlack / sumOfIndicator);
-        }
-
-        System.out.println(percentageFilled);
-
-        return getBestLine(percentageFilled);
-    }
-
-    private String getBestLine(HashMap<String, Double> map) {
-        String highestLine = "";
-        double highestValue = 0;
-        for (Map.Entry<String, Double> entry : map.entrySet()) {
-            String key = entry.getKey();
-            Double value = entry.getValue();
-            if (value > highestValue && value != 1) {
-                highestLine = key;
-                highestValue = value;
+            if (!isColumnSolved(i)) {
+                combos = getValidLineCombinations(getColumn(i));
+                lines.put("Column " + LetterMapper.mapToLetter(i + 1), combos.size());
+            }
+            if (!isRowSolved(i)) {
+                combos = getValidLineCombinations(getRow(i));
+                lines.put("Row " + LetterMapper.mapToLetter(i + 1), combos.size());
             }
         }
-        if (highestValue == 0) {
-            return "The solution is complete!!";
-        } else {
-            return "Look in " + highestLine;
+
+        return getBestLine(lines);
+    }
+
+    private String getBestLine(HashMap<String, Integer> map) {
+        String bestLine = "";
+        double lowestValue = 100;
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            System.out.println("lowest value\t" + lowestValue);
+            System.out.println("new value\t\t" + value);
+            System.out.println("line\t\t\t " + key);
+            System.out.println();
+            if (value < lowestValue) {
+                bestLine = key;
+                lowestValue = value;
+            }
         }
+
+        return "Look in " + bestLine;
     }
 
     private int getSumOfColumnIndicator(int column) {
@@ -389,7 +391,6 @@ public class Board extends Observable implements Serializable {
     public ArrayList<ArrayList<Boolean>> getPossibleLineCombinations(Square[] line, ArrayList<Integer> indicator) {
         ArrayList<ArrayList<Boolean>> combos = new ArrayList<>();
         ArrayList<Integer> positions = getStartPositions(indicator);
-        System.out.println(positions);
         System.out.println("Indicator:\t\t" + indicator + "\n******** POSSIBLE ********");
 
         clearPieces(line);
