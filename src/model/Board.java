@@ -329,20 +329,32 @@ public class Board extends Observable implements Serializable {
 
         for (int i = 0; i < possibleCombos.size(); i++) {
             for (int j = 0; j < line.length; j++) {
-                if (possibleCombos.get(i).get(j) && !line[j].isGreen()) {
+                if (possibleCombos.get(i).get(j)) {
                     line[j].setPossible(true);
                 } else {
                     line[j].setPossible(false);
                 }
             }
+
             ArrayList<Integer> possibleIndicator = createPossibleIndicatorList(line);
-            if (possibleIndicator.equals(indicator)) {
+            if (possibleIndicator.equals(indicator) && !overlapsGreen(line)) {
                 validCombos.add(possibleCombos.get(i));
             }
         }
         printCombos(validCombos);
 
         return validCombos;
+    }
+
+    private boolean overlapsGreen(Square[] line) {
+        for (Square square : line) {
+            if (square.isPossible()) {
+                if (square.isGreen() && !(square.isBlack() || square.isUserSelected())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public ArrayList<ArrayList<Boolean>> getPossibleLineCombinations(Square[] line, ArrayList<Integer> indicator) {
