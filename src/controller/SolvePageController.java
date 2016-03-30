@@ -74,7 +74,7 @@ public class SolvePageController extends Observer {
                                     board.setStyle(j, rowNumber, Enums.SquareColor.LIGHT_GREY);
                                 }
                             }
-                            board.notifyObservers();
+                            board.notifyObservers2();
                         }
                         clear = false;
                     });
@@ -82,10 +82,15 @@ public class SolvePageController extends Observer {
                     Platform.runLater(() -> {
                         for (int j = 0; j < board.getNumberOfRows(); j++) {
                             if (!board.isBlack(j, rowNumber) && !board.isUserSelected(j, rowNumber)) {
-                                board.setStyle(j, rowNumber, Enums.SquareColor.WHITE);
+                                if (!board.isColumnSolved(j)) {
+                                    board.setStyle(j, rowNumber, Enums.SquareColor.WHITE);
+                                } else {
+                                    board.setStyle(j, rowNumber, Enums.SquareColor.LIGHT_GREEN);
+                                }
+
                             }
                         }
-                        board.notifyObservers();
+                        board.notifyObservers2();
                         clear = true;
                     });
                 } else {
@@ -116,7 +121,7 @@ public class SolvePageController extends Observer {
                                     board.setStyle(columnNumber, j, Enums.SquareColor.LIGHT_GREY);
                                 }
                             }
-                            board.notifyObservers();
+                            board.notifyObservers2();
                         }
                         clear = false;
                     });
@@ -124,10 +129,14 @@ public class SolvePageController extends Observer {
                     Platform.runLater(() -> {
                         for (int j = 0; j < board.getNumberOfColumns(); j++) {
                             if (!board.isBlack(columnNumber, j) && !board.isUserSelected(columnNumber, j)) {
-                                board.setStyle(columnNumber, j, Enums.SquareColor.WHITE);
+                                if (!board.isRowSolved(j)) {
+                                    board.setStyle(columnNumber, j, Enums.SquareColor.WHITE);
+                                } else {
+                                    board.setStyle(columnNumber, j, Enums.SquareColor.LIGHT_GREEN);
+                                }
                             }
                         }
-                        board.notifyObservers();
+                        board.notifyObservers2();
                         clear = true;
                     });
                 } else {

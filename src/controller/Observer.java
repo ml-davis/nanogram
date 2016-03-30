@@ -26,11 +26,16 @@ public abstract class Observer {
     public void update() {
         updateColumnsSolved();
         updateRowsSolved();
-
         updateSquares();
         updateColumnIndicators();
         updateRowIndicators();
         System.out.println();
+    }
+
+    public void update2() {
+        updateSquares();
+        updateColumnIndicators();
+        updateRowIndicators();
     }
 
     public void updateRowsSolved() {
@@ -85,7 +90,6 @@ public abstract class Observer {
         for (int i = 0; i < board.getNumberOfColumns(); i++) {
             Square square = board.getSquare(i, row);
             if (!board.isColumnSolved(i)) {
-                square.setGreen(false);
                 colorSquare(square);
             }
         }
@@ -96,13 +100,13 @@ public abstract class Observer {
         for (int i = 0; i < board.getNumberOfRows(); i++) {
             Square square = board.getSquare(column, i);
             if (!board.isRowSolved(i)) {
-                square.setGreen(false);
                 colorSquare(square);
             }
         }
     }
 
     private void colorSquare(Square square) {
+        square.setGreen(false);
         if (square.isBlack()) {
             square.setStyle(Enums.SquareColor.BLACK);
         } else if (square.isUserSelected()) {

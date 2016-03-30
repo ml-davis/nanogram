@@ -25,4 +25,9 @@ public abstract class Observable {
         System.out.println("Notifying observers\n");
         subscribers.forEach(Observer::update);
     }
+
+    public void notifyObservers2() {
+        System.out.println("Notifying observers\n");
+        subscribers.forEach(Observer::update2);
+    }
 }
