@@ -1,9 +1,9 @@
 package main;
 
+import controller.PageLoader;
 import helpers.FileManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -50,27 +50,8 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    private static void loadSavedPuzzles() {
-        savedPuzzlesMenu = new Menu("Solve Saved Puzzles");
-        savedPuzzlesMenu.getItems().addAll(getSavedPuzzles());
-        menuBar.getMenus().get(1).getItems().add(savedPuzzlesMenu);
-    }
-
     public static void addSavedPuzzle(MenuItem item) {
         savedPuzzlesMenu.getItems().add(item);
-    }
-
-    private static ArrayList<MenuItem> getSavedPuzzles() {
-        ArrayList<MenuItem> items = new ArrayList<>();
-        ArrayList<File> puzzles = FileManager.getSavedPuzzles();
-        if (puzzles != null) {
-            Collections.sort(puzzles);
-            for (File file : puzzles) {
-                items.add(new MenuItem(file.getName()));
-            }
-        }
-
-        return items;
     }
 
     public static BorderPane getRoot() {
@@ -83,5 +64,21 @@ public class Main extends Application {
 
     public static void setBoard(Board b) {
         board = b;
+    }
+
+    public static MenuBar getMenuBar() {
+        return menuBar;
+    }
+
+    public static Menu getSavedPuzzlesMenu() {
+        return savedPuzzlesMenu;
+    }
+
+    public static void setSavedPuzzlesMenu(Menu menu) {
+        savedPuzzlesMenu = menu;
+    }
+
+    private static void loadSavedPuzzles() {
+        PageLoader.addSavedPuzzlesToMenuBar();
     }
 }

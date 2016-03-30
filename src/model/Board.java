@@ -4,10 +4,8 @@ import helpers.Enums;
 import helpers.LetterMapper;
 import main.Main;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.lang.reflect.Array;
+import java.util.*;
 
 public class Board extends Observable implements Serializable {
     private int numberOfRows;
@@ -348,11 +346,11 @@ public class Board extends Observable implements Serializable {
         return numberOfColumns;
     }
 
-    private Square[] getRow(int row) {
+    public Square[] getRow(int row) {
         return board[row];
     }
 
-    private Square[] getColumn(int column) {
+    public Square[] getColumn(int column) {
         Square[] col = new Square[this.numberOfRows];
         for (int i = 0; i < this.numberOfRows; i++) {
             col[i] = board[i][column];
@@ -364,185 +362,182 @@ public class Board extends Observable implements Serializable {
         return board[row][column];
     }
 
-
-
-    /*
-     *
-     *  Fucked up algorithms start here
-     *
-     */
-
-    // todo replace this method
-    public ArrayList<ArrayList<Boolean>> getValidRowCombos(int row) {
-        Board board = this;
-        ArrayList<Integer> rowIndicator = board.getColumnIndicator(row);
-        ArrayList<ArrayList<Boolean>> possibleCombos = getRowCombos(board, row);
+    public ArrayList<ArrayList<Boolean>> getValidLineCombinations(Square[] line) {
         ArrayList<ArrayList<Boolean>> validCombos = new ArrayList<>();
-        Square[] squares = getRow(row);
+        ArrayList<Integer> indicator = createIndicatorList(line);
+        ArrayList<ArrayList<Boolean>> possibleCombos = getPossibleLineCombinations(line, indicator);
+        System.out.println("********* VALID *********");
 
-        System.out.println("\n****************** VALID ******************");
-        for (int i = 0; i < board.getNumberOfColumns(); i++) {
-            System.out.printf("%-10s", i);
-        }
-        System.out.println();
-
-        for (ArrayList<Boolean> possibleCombo : possibleCombos) {
-            for (int i = 0; i < possibleCombo.size(); i++) {
-                squares[i].setPossible(possibleCombo.get(i));
-            }
-            ArrayList<Integer> possibleIndicator = createPossibleIndicatorList(getRow(row));
-
-            if (possibleIndicator.equals(rowIndicator)) {
-                ArrayList<Boolean> combo = new ArrayList<>();
-                for (Square square : squares) {
-                    combo.add(square.isPossible());
-                    System.out.printf("%-10s", square.isPossible());
+        for (int i = 0; i < possibleCombos.size(); i++) {
+            for (int j = 0; j < line.length; j++) {
+                if (possibleCombos.get(i).get(j)) {
+                    line[j].setPossible(true);
+                } else {
+                    line[j].setPossible(false);
                 }
-                System.out.println();
-                validCombos.add(combo);
             }
-            clearPossible(board, row);
+            ArrayList<Integer> possibleIndicator = createPossibleIndicatorList(line);
+            if (possibleIndicator.equals(indicator)) {
+                validCombos.add(possibleCombos.get(i));
+            }
         }
+        printCombos(validCombos);
 
         return validCombos;
     }
 
-    // todo replace this method
-    public ArrayList<ArrayList<Boolean>> getRowCombos(Board board, int row) {
-        ArrayList<Integer> rowIndicator = board.getColumnIndicator(row);
-        System.out.println("Indicator: " + rowIndicator);
+    public ArrayList<ArrayList<Boolean>> getPossibleLineCombinations(Square[] line, ArrayList<Integer> indicator) {
         ArrayList<ArrayList<Boolean>> combos = new ArrayList<>();
+        ArrayList<Integer> positions = getStartPositions(indicator);
+        System.out.println(positions);
+        System.out.println("Indicator:\t\t" + indicator + "\n******** POSSIBLE ********");
 
-        int rounds = board.getNumberOfColumns() - getSumOfRowIndicator(rowIndicator);
+        clearPieces(line);
+        line = placePieces(indicator, positions, line);
+        combos.add(getCombo(line));
+        while ((positions = incrementPositions(indicator, positions, line.length)) != null) {
+            line = clearPieces(line);
+            line = placePieces(indicator, positions, line);
+            combos.add(getCombo(line));
+        }
 
-        for (int k = 0; k < rounds; k++) {
-            ArrayList<Integer> startPositions = getStartPositions(rowIndicator, k);
-            assert startPositions != null;
+        printCombos(combos);
 
-            for (int i = 0; i < rowIndicator.size(); i++) {
-                placePieceOnRow(board, row, rowIndicator.get(i), startPositions.get(i));
-            }
-            combos.add(addRowToCombos(board, row));
+        return combos;
+    }
 
-            int focusPiece = rowIndicator.size() - 1;
-            int index = startPositions.get(focusPiece) + 1;
-            if (rowIndicator.size() == 2) {
-                while (index + rowIndicator.get(focusPiece) - 1 < board.getNumberOfColumns()) {
-                    clearPossible(board, row, index - 1);
-                    placePieceOnRow(board, row, rowIndicator.get(focusPiece), index++);
-                    combos.add(addRowToCombos(board, row));
-                }
-                clearPossible(board, row);
+    private void printLine(Square[] line) {
+        System.out.print("$ ");
+        for (Square s : line) {
+            if (s.isPossible()) {
+                System.out.print("X ");
             } else {
-                clearPossible(board, row, index - 1);
-                placePieceOnRow(board, row, rowIndicator.get(focusPiece), index);
+                System.out.print("- ");
             }
         }
-        if (rowIndicator.size() == 1) {
-            placePieceOnRow(board, row, rowIndicator.get(0), board.getNumberOfColumns() - 1);
-            combos.add(addRowToCombos(board, row));
-        }
-        clearPossible(board, row);
-        // print some shit
-        System.out.println("*********** POSSIBLE ***********");
-        for (int i = 0; i < board.getNumberOfColumns(); i++) {
-            System.out.printf("%-10s", i);
-        }
-        System.out.println();
+        System.out.println("\n");
+    }
+
+    private void printCombos(ArrayList<ArrayList<Boolean>> combos) {
         for (ArrayList<Boolean> combo : combos) {
-            for (Boolean b: combo) {
-                System.out.printf("%-10s", b);
+            for (Boolean possible : combo) {
+                if (possible) {
+                    System.out.print("0 ");
+                } else {
+                    System.out.print("- ");
+                }
             }
             System.out.println();
         }
-
-        return combos;
     }
 
-    // todo replace this method
-    private ArrayList<Boolean> addRowToCombos(Board board, int row) {
-        ArrayList<Boolean> combos = new ArrayList<>();
-        for (Square square : board.getRow(row)) {
-            combos.add(square.isPossible());
-        }
-        return combos;
-    }
-
-    // todo replace this method
-    private ArrayList<Integer> getStartPositions(ArrayList<Integer> indicator, int round) {
-        if (indicator.size() > 0) {
-            ArrayList<Integer> startPositions = new ArrayList<>();
-            startPositions.add(round);
-
-            int sum = 0;
-            for (int i = 0; i < indicator.size() - 1; i++) {
-                sum += indicator.get(i) + 1 + round;
-                startPositions.add(sum);
+    private ArrayList<Boolean> getCombo(Square[] line) {
+        ArrayList<Boolean> combo = new ArrayList<>();
+        for (Square square : line) {
+            if (square.isPossible()) {
+                combo.add(true);
+            } else {
+                combo.add(false);
             }
+        }
+        return combo;
+    }
 
-            return startPositions;
+    private ArrayList<Integer> getStartPositions(ArrayList<Integer> indicator) {
+        ArrayList<Integer> startPositions = new ArrayList<>(indicator.size());
+        int sum = 0;
+        for (int i = 0; i < indicator.size(); i++) {
+            startPositions.add(sum + i);
+            sum += indicator.get(i);
+        }
+        return startPositions;
+    }
+
+    private int getStopPosition(int focusPiece, ArrayList<Integer> indicator, int lineLength) {
+        ArrayList<Integer> endPositions = new ArrayList<>(indicator.size());
+        int index = indicator.size() - 1;
+        for (int i = 0; i < indicator.size(); i++) {
+            endPositions.add(lineLength - i);
+            lineLength -= (indicator.get(index--));
         }
 
+        return endPositions.get(focusPiece);
+    }
+
+    private ArrayList<Integer> incrementPositions(ArrayList<Integer> indicator, ArrayList<Integer> positions, int lineLength) {
+        int count = 0;
+        for (int i = positions.size() - 1; i >= 0; i--) {
+            if (positions.get(i) + indicator.get(i) < getStopPosition(count++, indicator, lineLength)) {
+                positions.set(i, positions.get(i) + 1);
+                return positions;
+            } else {
+                int a = indicator.size();
+                // todo turn this into a loop
+                if (indicator.size() > 1) {
+                    if (count == 1 && indicator.size() > 1) {
+                        positions.set(a - 2, positions.get(a - 2));
+                        positions.set(a - 1, positions.get(a - 2) + indicator.get(a-2) + 2);
+                    } else if (count == 2 && indicator.size() > 2) {
+                        positions.set(a - 3, positions.get(a - 3));
+                        positions.set(a - 2, positions.get(a - 3) + indicator.get(a - 3) + 2);
+                        positions.set(a - 1, positions.get(a - 2) + indicator.get(a - 2) + 1);
+                    } else if (count == 3 && indicator.size() > 3) {
+                        positions.set(a - 4, positions.get(a - 4));
+                        positions.set(a - 3, positions.get(a - 4) + indicator.get(a - 4) + 2);
+                        positions.set(a - 2, positions.get(a - 3) + indicator.get(a - 3) + 1);
+                        positions.set(a - 1, positions.get(a - 2) + indicator.get(a - 2) + 1);
+                    } else if (count == 4  && indicator.size() > 4) {
+                        positions.set(a - 5, positions.get(a - 5));
+                        positions.set(a - 4, positions.get(a - 5) + indicator.get(a - 5) + 2);
+                        positions.set(a - 3, positions.get(a - 4) + indicator.get(a - 4) + 1);
+                        positions.set(a - 2, positions.get(a - 3) + indicator.get(a - 3) + 1);
+                        positions.set(a - 1, positions.get(a - 2) + indicator.get(a - 2) + 1);
+                    } else if (count == 5 && indicator.size() > 5) {
+                        positions.set(a - 6, positions.get(a - 6));
+                        positions.set(a - 5, positions.get(a - 6) + indicator.get(a - 6) + 2);
+                        positions.set(a - 4, positions.get(a - 5) + indicator.get(a - 5) + 1);
+                        positions.set(a - 3, positions.get(a - 4) + indicator.get(a - 4) + 1);
+                        positions.set(a - 2, positions.get(a - 3) + indicator.get(a - 3) + 1);
+                        positions.set(a - 1, positions.get(a - 2) + indicator.get(a - 2) + 1);
+                    } else if (count == 6 && indicator.size() > 6) {
+                        positions.set(a - 7, positions.get(a - 7));
+                        positions.set(a - 6, positions.get(a - 7) + indicator.get(a - 7) + 2);
+                        positions.set(a - 5, positions.get(a - 6) + indicator.get(a - 6) + 1);
+                        positions.set(a - 4, positions.get(a - 5) + indicator.get(a - 5) + 1);
+                        positions.set(a - 3, positions.get(a - 4) + indicator.get(a - 4) + 1);
+                        positions.set(a - 2, positions.get(a - 3) + indicator.get(a - 3) + 1);
+                        positions.set(a - 1, positions.get(a - 2) + indicator.get(a - 2) + 1);
+                    } else if (count == 7 && indicator.size() > 7) {
+                        positions.set(a - 8, positions.get(a - 8));
+                        positions.set(a - 7, positions.get(a - 8) + indicator.get(a - 8) + 2);
+                        positions.set(a - 6, positions.get(a - 7) + indicator.get(a - 7) + 1);
+                        positions.set(a - 5, positions.get(a - 6) + indicator.get(a - 6) + 1);
+                        positions.set(a - 4, positions.get(a - 5) + indicator.get(a - 5) + 1);
+                        positions.set(a - 3, positions.get(a - 4) + indicator.get(a - 4) + 1);
+                        positions.set(a - 2, positions.get(a - 3) + indicator.get(a - 3) + 1);
+                        positions.set(a - 1, positions.get(a - 2) + indicator.get(a - 2) + 1);
+                    }
+                }
+            }
+        }
         return null;
     }
 
-    // todo replace this method
-    private Board placePieceOnRow(Board board, int row, int pieceSize, int startIndex) {
-        if (startIndex + pieceSize - 1 < board.getNumberOfColumns()) {
-            for (int i = 0; i < pieceSize; i++) {
-                Square square = board.getSquare(row, startIndex + i);
-                square.setPossible(true);
+    private Square[] placePieces(ArrayList<Integer> indicator, ArrayList<Integer> positions, Square[] line) {
+        for (int i = 0; i < indicator.size(); i++) {
+            int position = positions.get(i);
+            for (int j = 0; j < indicator.get(i); j++) {
+                line[position++].setPossible(true);
             }
         }
-        return board;
+        return line;
     }
 
-    // todo replace this method
-    private Board placePieceOnColumn(Board board, int column, int pieceSize, int startIndex) {
-        if (startIndex + pieceSize - 1 < board.getNumberOfColumns()) {
-            for (int i = 0; i < pieceSize; i++) {
-                Square square = board.getSquare(startIndex + i, column);
-                square.setPossible(true);
-            }
-        }
-        return board;
-    }
-
-    // todo replace this method
-    private Board clearPossible(Board board, int row) {
-        Square[] squares = board.getRow(row);
-        for (Square square: squares) {
+    private Square[] clearPieces(Square[] line) {
+        for (Square square : line) {
             square.setPossible(false);
         }
-        return board;
-    }
-
-    // todo replace this method
-    private Board clearPossible(Board board, int column, boolean isColumn) {
-        Square[] squares = board.getColumn(column);
-        for (Square square: squares) {
-            square.setPossible(false);
-        }
-        return board;
-    }
-
-    // todo replace this method
-    private Board clearPossible(Board board, int row, int start) {
-        for (int i = start; i < board.getNumberOfColumns(); i++) {
-            board.getSquare(row, i).setPossible(false);
-        }
-
-        return board;
-    }
-
-    // todo replace this method
-    private Board clearPossible(Board board, int row, int start, boolean isColumn) {
-
-        for (int i = start; i < board.getNumberOfColumns(); i++) {
-            board.getSquare(row, i).setPossible(false);
-        }
-
-        return board;
+        return line;
     }
 
 }

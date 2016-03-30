@@ -1,12 +1,12 @@
 package controller;
 
-//import javafx.animation.AnimationTimer;
-//import javafx.application.Platform;
-//import javafx.scene.Node;
-//import java.util.ArrayList;
-//import java.util.concurrent.Executors;
-//import java.util.concurrent.ScheduledExecutorService;
-//import java.util.concurrent.TimeUnit;
+import javafx.animation.AnimationTimer;
+import javafx.application.Platform;
+import javafx.scene.Node;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import helpers.Enums;
 import main.Main;
 import model.Board;
@@ -58,62 +58,86 @@ public class SolvePageController extends Observer {
     }
 
     public void rowButtonClicked(int rowNumber) {
-        PageLoader.launchPromptWindow("Under construction");
+        Board board = Main.getBoard();
+        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ArrayList<ArrayList<Boolean>> validCombos = board.getValidLineCombinations(board.getRow(rowNumber));
+
+        scheduler.scheduleAtFixedRate(new Runnable() {
+            int counter = 0;
+            boolean clear = true;
+
+            @Override
+            public void run() {
+                if (counter < validCombos.size() && clear) {
+                    Platform.runLater(() -> {
+                        if (counter < validCombos.size()) {
+                            ArrayList<Boolean> combos = validCombos.get(counter++);
+                            for (int j = 0; j < board.getNumberOfRows(); j++) {
+                                if (combos.get(j) && !board.isBlack(j, rowNumber) && !board.isUserSelected(j, rowNumber)) {
+                                    board.setStyle(j, rowNumber, Enums.SquareColor.LIGHT_GREY);
+                                }
+                            }
+                            board.notifyObservers();
+                        }
+                        clear = false;
+                    });
+                } else if (counter <= validCombos.size() && !clear) {
+                    Platform.runLater(() -> {
+                        for (int j = 0; j < board.getNumberOfRows(); j++) {
+                            if (!board.isBlack(j, rowNumber) && !board.isUserSelected(j, rowNumber)) {
+                                board.setStyle(j, rowNumber, Enums.SquareColor.WHITE);
+                            }
+                        }
+                        board.notifyObservers();
+                        clear = true;
+                    });
+                } else {
+                    scheduler.shutdown();
+                    Platform.runLater(() -> System.out.println("Ending animation"));
+                }
+            }
+        }, 1, 350, TimeUnit.MILLISECONDS);
     }
 
     public void columnButtonClicked(int columnNumber) {
+        Board board = Main.getBoard();
+        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ArrayList<ArrayList<Boolean>> validCombos = board.getValidLineCombinations(board.getColumn(columnNumber));
 
-        PageLoader.launchPromptWindow("Under construction");
+        scheduler.scheduleAtFixedRate(new Runnable() {
+            int counter = 0;
+            boolean clear = true;
 
-//        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//        int numberOfRows = Main.getBoard().getNumberOfRows();
-//        ArrayList<ArrayList<Boolean>> validCombos = Main.getBoard().getValidRowCombos(columnNumber);
-//
-//        scheduler.scheduleAtFixedRate(new Runnable() {
-//            int counter = 0;
-//            boolean clear = true;
-//
-//            @Override
-//            public void run() {
-//                if (counter < validCombos.size() && clear) {
-//                    Platform.runLater(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if (counter < validCombos.size()) {
-//                                ArrayList<Boolean> combos = validCombos.get(counter++);
-//                                for (int j = 0; j < Main.getBoard().getNumberOfColumns(); j++) {
-//                                    if (combos.get(j) && !Main.getBoard().isBlack(columnNumber, j) && !Main.getBoard().isUserSelected(columnNumber, j)) {
-//                                        Main.getBoard().setStyle(columnNumber, j, Enums.SquareColor.LIGHT_GREY);
-//                                    }
-//                                }
-//                                Main.getBoard().notifyObservers();
-//                            }
-//                            clear = false;
-//                        }
-//                    });
-//                } else if (counter <= validCombos.size() && !clear) {
-//                    Platform.runLater(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            for (int j = 0; j < Main.getBoard().getNumberOfColumns(); j++) {
-//                                if (!Main.getBoard().isBlack(columnNumber, j) && !Main.getBoard().isUserSelected(columnNumber, j)) {
-//                                    Main.getBoard().setStyle(columnNumber, j, Enums.SquareColor.WHITE);
-//                                }
-//                            }
-//                            Main.getBoard().notifyObservers();
-//                            clear = true;
-//                        }
-//                    });
-//                } else {
-//                    scheduler.shutdown();
-//                    Platform.runLater(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            System.out.println("Ending animation");
-//                        }
-//                    });
-//                }
-//            }
-//        }, 1, 500, TimeUnit.MILLISECONDS);
+            @Override
+            public void run() {
+                if (counter < validCombos.size() && clear) {
+                    Platform.runLater(() -> {
+                        if (counter < validCombos.size()) {
+                            ArrayList<Boolean> combos = validCombos.get(counter++);
+                            for (int j = 0; j < board.getNumberOfColumns(); j++) {
+                                if (combos.get(j) && !board.isBlack(columnNumber, j) && !board.isUserSelected(columnNumber, j)) {
+                                    board.setStyle(columnNumber, j, Enums.SquareColor.LIGHT_GREY);
+                                }
+                            }
+                            board.notifyObservers();
+                        }
+                        clear = false;
+                    });
+                } else if (counter <= validCombos.size() && !clear) {
+                    Platform.runLater(() -> {
+                        for (int j = 0; j < board.getNumberOfColumns(); j++) {
+                            if (!board.isBlack(columnNumber, j) && !board.isUserSelected(columnNumber, j)) {
+                                board.setStyle(columnNumber, j, Enums.SquareColor.WHITE);
+                            }
+                        }
+                        board.notifyObservers();
+                        clear = true;
+                    });
+                } else {
+                    scheduler.shutdown();
+                    Platform.runLater(() -> System.out.println("Ending animation"));
+                }
+            }
+        }, 1, 350, TimeUnit.MILLISECONDS);
     }
 }

@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -52,8 +53,7 @@ public class PageLoader {
 
     @FXML
     public void loadFrontPage() {
-        addSavedPuzzlesToMenuBar();
-        AnchorPane frontPage = navigateToPage(Enums.Page.FRONT_PAGE);
+        navigateToPage(Enums.Page.FRONT_PAGE);
     }
 
     @FXML
@@ -131,7 +131,7 @@ public class PageLoader {
             rowButton.setPrefSize(cellSize * .6, cellSize);
             final int finalI = i;
             rowButton.setOnAction(e -> {
-                controller.columnButtonClicked(finalI);
+                controller.rowButtonClicked(finalI);
             });
             hBox.getChildren().add(rowButton);
             grid.add(hBox, numberOfRows + 1, i + 1);
@@ -207,20 +207,18 @@ public class PageLoader {
 //    Main.setBoard(board);
 
     @FXML
-    public void addSavedPuzzlesToMenuBar() {
-        /*
-         *
-         *
-         *  fix me !!!!!!!!!!!!!!!!
-         *
-         *
-         *
-         */
+    public static void addSavedPuzzlesToMenuBar() {
+        Main.setSavedPuzzlesMenu(new Menu("Solve Saved Puzzles"));
+        ArrayList<File> puzzles = FileManager.getSavedPuzzles();
+        if (puzzles != null) {
+            Collections.sort(puzzles);
+            for (File puzzle : puzzles) {
+                MenuItem item = new MenuItem(puzzle.getName());
+                Main.addSavedPuzzle(item);
+            }
+        }
 
-
-
-
-
+        Main.getMenuBar().getMenus().get(1).getItems().add(Main.getSavedPuzzlesMenu());
     }
 
     public static void launchPromptWindow(String message) {
@@ -297,7 +295,7 @@ public class PageLoader {
     }
 
     private int getCellSize(int largestLine) {
-        return (int) ((-.7)*largestLine + 30);
+        return (int) ((-1.75)*largestLine + 50);
     }
 
     private int max(int a, int b) {
