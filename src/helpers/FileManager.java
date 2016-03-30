@@ -2,10 +2,7 @@ package helpers;
 
 import model.Board;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -17,22 +14,14 @@ public class FileManager {
     }
 
     public boolean savePuzzle(Board board, String name) {
-        File path = new File("games");
         try {
-            ObjectOutputStream outputStream;
-            if (isWindows()) {
-                outputStream = new ObjectOutputStream(new FileOutputStream(path + "\\" + name));
-            } else {
-                outputStream = new ObjectOutputStream(new FileOutputStream(path + "/" + name));
-            }
+            ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(getFilePath() + name));
             outputStream.writeObject(board);
             outputStream.close();
-            System.out.println("Saved file " + path + "/" + name);
+            System.out.println("Saved file: " + getFilePath() + name);
             return true;
-
         } catch (IOException e) {
-            e.printStackTrace(System.out);
-            System.out.println("Failed to save file " + path + "/" + name);
+            System.out.println("Failed to save file: " + getFilePath() + name);
             return false;
         }
     }
@@ -44,6 +33,36 @@ public class FileManager {
             return new ArrayList<>(Arrays.asList(files));
         }
         return null;
+    }
+
+    public Board getPuzzle(String puzzleName) {
+        ArrayList<File> puzzles = getSavedPuzzles();
+        Board board;
+        if (puzzles != null) {
+            for (File puzzle : puzzles) {
+                if (puzzle.getName().equals(puzzleName)) {
+                    try {
+                        ObjectInputStream inputStream = new ObjectInputStream(
+                                new FileInputStream(getFilePath() + puzzle.getName()));
+                        board = (Board) inputStream.readObject();
+                        System.out.println("Loaded puzzle: " + getFilePath() + puzzle.getName());
+                        return board;
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.out.println("Failed to load puzzle: " + getFilePath() + puzzle.getName());
+                    }
+
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getFilePath() {
+        if (isWindows()) {
+            return "games\\";
+        } else {
+            return "games/";
+        }
     }
 
     private boolean isWindows() {

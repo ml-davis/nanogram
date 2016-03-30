@@ -8,15 +8,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import model.Board;
 
-import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class Main extends Application {
 
@@ -46,6 +44,7 @@ public class Main extends Application {
         primaryStage.setScene(myScene);
 
         primaryStage.setTitle("Nanogram");
+        primaryStage.getIcons().add(new Image("file:images/puzzle_icon.png"));
 
         primaryStage.show();
     }
@@ -79,6 +78,7 @@ public class Main extends Application {
     }
 
     private static void loadSavedPuzzles() {
-        PageLoader.addSavedPuzzlesToMenuBar();
+        PageLoader loader = new PageLoader();
+        loader.addSavedPuzzlesToMenuBar();
     }
 }

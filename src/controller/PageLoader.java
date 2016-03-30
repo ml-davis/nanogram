@@ -100,9 +100,22 @@ public class PageLoader {
             board.notifyObservers();
             int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
             GridPane grid = (GridPane) solvePage.lookup("#boardPane");
-            addRowLabels(boardSize, grid, cellSize);
-            addColumnLabels(boardSize, grid, cellSize);
+            addRowLabels(board, grid, cellSize);
+            addColumnLabels(board, grid, cellSize);
         }
+    }
+
+    public void loadSolvePage(Board board) {
+        AnchorPane solvePage = navigateToPage(Enums.Page.SOLVE_PAGE);
+        SolvePageController controller = new SolvePageController(board.getNumberOfRows(), board.getNumberOfColumns());
+        createBoard(solvePage, board, controller);
+        int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
+        GridPane grid = (GridPane) solvePage.lookup("#boardPane");
+        controller.updateColumnsSolved();
+        controller.updateRowsSolved();
+        board.notifyObservers();
+        addRowLabels(board, grid, cellSize);
+        addColumnLabels(board, grid, cellSize);
     }
 
     @FXML
@@ -120,10 +133,9 @@ public class PageLoader {
         }
     }
 
-    public void addRowLabels(int numberOfRows, GridPane grid, int cellSize) {
-        Board board = Main.getBoard();
+    public void addRowLabels(Board board, GridPane grid, int cellSize) {
         SolvePageController controller = new SolvePageController(board.getNumberOfRows(), board.getNumberOfColumns());
-        for (int i = 0; i < numberOfRows; i++) {
+        for (int i = 0; i < board.getNumberOfRows(); i++) {
             HBox hBox = new HBox();
             hBox.setAlignment(Pos.CENTER_LEFT);
             char rowLetter = LetterMapper.mapToLetter(i + 1);
@@ -135,14 +147,13 @@ public class PageLoader {
                 controller.rowButtonClicked(finalI);
             });
             hBox.getChildren().add(rowButton);
-            grid.add(hBox, numberOfRows + 1, i + 1);
+            grid.add(hBox, board.getNumberOfRows() + 1, i + 1);
         }
     }
 
-    public void addColumnLabels(int numberOfColumns, GridPane grid, int cellSize) {
-        Board board = Main.getBoard();
+    public void addColumnLabels(Board board, GridPane grid, int cellSize) {
         SolvePageController controller = new SolvePageController(board.getNumberOfRows(), board.getNumberOfColumns());
-        for (int i = 0; i < numberOfColumns; i++) {
+        for (int i = 0; i < board.getNumberOfColumns(); i++) {
             VBox vBox = new VBox();
             vBox.setAlignment(Pos.TOP_CENTER);
             char rowLetter = LetterMapper.mapToLetter(i + 1);
@@ -154,7 +165,7 @@ public class PageLoader {
                 controller.columnButtonClicked(finalI);
             });
             vBox.getChildren().add(columnButton);
-            grid.add(vBox, i + 1, numberOfColumns + 1);
+            grid.add(vBox, i + 1, board.getNumberOfColumns() + 1);
         }
     }
 
@@ -173,18 +184,31 @@ public class PageLoader {
     }
 
     @FXML
-    public static void addSavedPuzzlesToMenuBar() {
+    public void addSavedPuzzlesToMenuBar() {
         Main.setSavedPuzzlesMenu(new Menu("Solve Saved Puzzles"));
         ArrayList<File> puzzles = FileManager.getSavedPuzzles();
         if (puzzles != null) {
             Collections.sort(puzzles);
             for (File puzzle : puzzles) {
                 MenuItem item = new MenuItem(puzzle.getName());
+                item.setOnAction(e -> {
+                    loadPuzzle(puzzle.getName());
+                });
                 Main.addSavedPuzzle(item);
             }
         }
 
         Main.getMenuBar().getMenus().get(1).getItems().add(Main.getSavedPuzzlesMenu());
+    }
+
+    private void loadPuzzle(String puzzleName) {
+        FileManager fileManager = new FileManager();
+        Board board = fileManager.getPuzzle(puzzleName);
+        if (board != null) {
+            Main.setBoard(board);
+            loadSolvePage(board);
+        }
+
     }
 
     public static void launchPromptWindow(String message) {
@@ -227,7 +251,7 @@ public class PageLoader {
                 square.setPrefSize(cellSize, cellSize);
                 square.setId(j + "" + i);
                 square.setOnAction(e -> boardPane.toggleCell(finalJ, finalI));
-                grid.add(square, j+1, i+1);
+                grid.add(square, j + 1, i + 1);
                 boardPane.setSquare(square, i, j);
             }
         }
