@@ -1,8 +1,6 @@
 package controller;
 
-import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
-import javafx.scene.Node;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -30,7 +28,6 @@ public class SolvePageController extends Observer {
         } else if (!board.isBlack(column, row) && board.isUserSelected(column, row)) {
             board.toggleUserSelected(column, row);
             board.setStyle(column, row, Enums.SquareColor.WHITE);
-
         }
 
         // print some stuff for debugging purposes

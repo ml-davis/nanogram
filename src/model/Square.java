@@ -9,6 +9,7 @@ public class Square implements Serializable {
     private boolean black;
     private boolean userSelected;
     private boolean possible;
+    private boolean green;
     private String style;
 
     public Square() {
@@ -16,6 +17,14 @@ public class Square implements Serializable {
         black = false;
         userSelected = false;
         setStyle(Enums.SquareColor.WHITE);
+    }
+
+    public void setGreen(boolean green) {
+        this.green = green;
+    }
+
+    public boolean isGreen() {
+        return green;
     }
 
     public void toggleFlag() {
@@ -47,6 +56,8 @@ public class Square implements Serializable {
             case BLACK: css += "-fx-background-color: black;"; break;
             case LIGHT_GREY: css += "-fx-background-color: #A6A6A6;"; break;
             case DARK_GREY: css += "-fx-background-color: #444444;"; break;
+            case LIGHT_GREEN: css += "-fx-background-color: #A0D79A;"; break;
+            case DARK_GREEN: css += "-fx-background-color: #0C5200;"; break;
         }
         this.style = css;
     }

@@ -111,14 +111,14 @@ public class Board extends Observable implements Serializable {
         return true;
     }
 
-    private boolean isRowSolved(int row) {
+    public boolean isRowSolved(int row) {
         ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(row));
         ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(row);
 
         return userIndicator.equals(solutionIndicator);
     }
 
-    private boolean isColumnSolved(int column) {
+    public boolean isColumnSolved(int column) {
         ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(column));
         ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(column);
 
@@ -192,6 +192,10 @@ public class Board extends Observable implements Serializable {
     }
 
     private String getBestLine(HashMap<String, Integer> map) {
+        if (map.size() == 0) {
+            return "The solution is complete!";
+        }
+
         String bestLine = "";
         double lowestValue = 100;
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
@@ -208,54 +212,6 @@ public class Board extends Observable implements Serializable {
         }
 
         return "Look in " + bestLine;
-    }
-
-    private int getSumOfColumnIndicator(int column) {
-        ArrayList<Integer> columnIndicator = getColumnIndicator(column);
-        int sum = 0;
-        for (int indicator : columnIndicator) {
-            sum += indicator;
-        }
-        return sum;
-    }
-
-    private int getSumOfBlackOrSelectedInColumn(int column) {
-        int sum = 0;
-        Square[] line = this.getColumn(column);
-        for (Square square: line) {
-            if (square.isBlack() || square.isUserSelected()) {
-                sum++;
-            }
-        }
-        return sum;
-    }
-
-    private int getSumOfRowIndicator(int row) {
-        ArrayList<Integer> rowIndicator = getRowIndicator(row);
-        int sum = 0;
-        for (int indicator : rowIndicator) {
-            sum += indicator;
-        }
-        return sum;
-    }
-
-    private int getSumOfRowIndicator(ArrayList<Integer> row) {
-        int sum = 0;
-        for (int indicator : row) {
-            sum += indicator;
-        }
-        return sum;
-    }
-
-    private int getSumOfBlackOrSelectedInRow(int row) {
-        int sum = 0;
-        Square[] line = this.getRow(row);
-        for (Square square : line) {
-            if (square.isBlack() || square.isUserSelected()) {
-                sum++;
-            }
-        }
-        return sum;
     }
 
     private ArrayList<Integer> createIndicatorList(Square[] line) {
@@ -365,14 +321,15 @@ public class Board extends Observable implements Serializable {
     }
 
     public ArrayList<ArrayList<Boolean>> getValidLineCombinations(Square[] line) {
+
         ArrayList<ArrayList<Boolean>> validCombos = new ArrayList<>();
         ArrayList<Integer> indicator = createIndicatorList(line);
         ArrayList<ArrayList<Boolean>> possibleCombos = getPossibleLineCombinations(line, indicator);
-        System.out.println("********* VALID *********");
+        System.out.println("\n********* VALID *********");
 
         for (int i = 0; i < possibleCombos.size(); i++) {
             for (int j = 0; j < line.length; j++) {
-                if (possibleCombos.get(i).get(j)) {
+                if (possibleCombos.get(i).get(j) && !line[j].isGreen()) {
                     line[j].setPossible(true);
                 } else {
                     line[j].setPossible(false);

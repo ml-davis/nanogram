@@ -1,11 +1,14 @@
 package controller;
 
+import helpers.Enums;
+import helpers.LetterMapper;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import main.Main;
 import model.Board;
+import model.Square;
 
 import java.util.ArrayList;
 
@@ -21,9 +24,92 @@ public abstract class Observer {
     }
 
     public void update() {
+        updateColumnsSolved();
+        updateRowsSolved();
+
         updateSquares();
         updateColumnIndicators();
         updateRowIndicators();
+        System.out.println();
+    }
+
+    public void updateRowsSolved() {
+        Board board = Main.getBoard();
+        for (int i = 0; i < board.getNumberOfRows(); i++) {
+            if (board.isRowSolved(i)) {
+                System.out.println("ROW " + LetterMapper.mapToLetter(i + 1) + " IS SOLVED");
+                colorRowGreen(i);
+            } else {
+                colorRow(i);
+            }
+        }
+    }
+
+    public void updateColumnsSolved() {
+        Board board = Main.getBoard();
+        for (int i = 0; i < board.getNumberOfColumns(); i++) {
+            if (board.isColumnSolved(i)) {
+                System.out.println("COLUMN " + LetterMapper.mapToLetter(i + 1) + " IS SOLVED");
+                colorColumnGreen(i);
+            } else {
+                colorColumn(i);
+            }
+        }
+    }
+
+    private void colorRowGreen(int row) {
+        Board board = Main.getBoard();
+        Square[] squares = board.getRow(row);
+        colorLineGreen(squares);
+    }
+
+    private void colorColumnGreen(int column) {
+        Board board = Main.getBoard();
+        Square[] squares = board.getColumn(column);
+        colorLineGreen(squares);
+    }
+
+    private void colorLineGreen(Square[] squares) {
+        for (Square square : squares) {
+            square.setGreen(true);
+            if (square.isBlack() || square.isUserSelected()) {
+                square.setStyle(Enums.SquareColor.DARK_GREEN);
+            } else {
+                square.setStyle(Enums.SquareColor.LIGHT_GREEN);
+            }
+        }
+    }
+
+    private void colorRow(int row) {
+        Board board = Main.getBoard();
+        for (int i = 0; i < board.getNumberOfColumns(); i++) {
+            Square square = board.getSquare(i, row);
+            if (!board.isColumnSolved(i)) {
+                square.setGreen(false);
+                colorSquare(square);
+            }
+        }
+    }
+
+    private void colorColumn(int column) {
+        Board board = Main.getBoard();
+        for (int i = 0; i < board.getNumberOfRows(); i++) {
+            Square square = board.getSquare(column, i);
+            if (!board.isRowSolved(i)) {
+                square.setGreen(false);
+                colorSquare(square);
+            }
+        }
+    }
+
+    private void colorSquare(Square square) {
+        if (square.isBlack()) {
+            square.setStyle(Enums.SquareColor.BLACK);
+        } else if (square.isUserSelected()) {
+            square.setStyle(Enums.SquareColor.DARK_GREY);
+        } else {
+            square.setStyle(Enums.SquareColor.WHITE);
+        }
     }
 
     public abstract void toggleCell(int column, int row);
