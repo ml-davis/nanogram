@@ -37,6 +37,9 @@ public class SavePageController {
             } else {
                 PageLoader.launchPromptWindow("Sorry, we could not save your puzzle.");
             }
+
+            Stage s = (Stage) nameField.getScene().getWindow();
+            s.close();
         }
     }
 }

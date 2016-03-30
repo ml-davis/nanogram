@@ -1,5 +1,6 @@
 package controller;
 
+import helpers.LetterMapper;
 import javafx.application.Platform;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -8,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import helpers.Enums;
 import main.Main;
 import model.Board;
+import model.Square;
 
 
 public class SolvePageController extends Observer {
@@ -34,6 +36,8 @@ public class SolvePageController extends Observer {
         System.out.println("Column " + (column + 1) + ", Row " + (row + 1));
         System.out.println(board.getSquare(column, row).getStateString());
 
+        updateColumnsSolved();
+        updateRowsSolved();
         board.notifyObservers();
     }
 
@@ -56,6 +60,12 @@ public class SolvePageController extends Observer {
 
     public void rowButtonClicked(int rowNumber) {
         Board board = Main.getBoard();
+
+        if (board.isRowSolved(rowNumber)) {
+            PageLoader.launchPromptWindow("That row is solved");
+            return;
+        }
+
         final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         ArrayList<ArrayList<Boolean>> validCombos = board.getValidLineCombinations(board.getRow(rowNumber));
 
@@ -74,7 +84,7 @@ public class SolvePageController extends Observer {
                                     board.setStyle(j, rowNumber, Enums.SquareColor.LIGHT_GREY);
                                 }
                             }
-                            board.notifyObservers2();
+                            board.notifyObservers();
                         }
                         clear = false;
                     });
@@ -90,7 +100,7 @@ public class SolvePageController extends Observer {
 
                             }
                         }
-                        board.notifyObservers2();
+                        board.notifyObservers();
                         clear = true;
                     });
                 } else {
@@ -103,6 +113,12 @@ public class SolvePageController extends Observer {
 
     public void columnButtonClicked(int columnNumber) {
         Board board = Main.getBoard();
+
+        if (board.isColumnSolved(columnNumber)) {
+            PageLoader.launchPromptWindow("That column is solved");
+            return;
+        }
+
         final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         ArrayList<ArrayList<Boolean>> validCombos = board.getValidLineCombinations(board.getColumn(columnNumber));
 
@@ -121,7 +137,7 @@ public class SolvePageController extends Observer {
                                     board.setStyle(columnNumber, j, Enums.SquareColor.LIGHT_GREY);
                                 }
                             }
-                            board.notifyObservers2();
+                            board.notifyObservers();
                         }
                         clear = false;
                     });
@@ -136,7 +152,7 @@ public class SolvePageController extends Observer {
                                 }
                             }
                         }
-                        board.notifyObservers2();
+                        board.notifyObservers();
                         clear = true;
                     });
                 } else {
@@ -145,5 +161,83 @@ public class SolvePageController extends Observer {
                 }
             }
         }, 1, 350, TimeUnit.MILLISECONDS);
+    }
+
+    public void updateRowsSolved() {
+        Board board = Main.getBoard();
+        for (int i = 0; i < board.getNumberOfRows(); i++) {
+            if (board.isRowSolved(i)) {
+                System.out.println("ROW " + LetterMapper.mapToLetter(i + 1) + " IS SOLVED");
+                colorRowGreen(i);
+            } else {
+                colorRow(i);
+            }
+        }
+    }
+
+    public void updateColumnsSolved() {
+        Board board = Main.getBoard();
+        for (int i = 0; i < board.getNumberOfColumns(); i++) {
+            if (board.isColumnSolved(i)) {
+                System.out.println("COLUMN " + LetterMapper.mapToLetter(i + 1) + " IS SOLVED");
+                colorColumnGreen(i);
+            } else {
+                colorColumn(i);
+            }
+        }
+    }
+
+    private void colorRowGreen(int row) {
+        Board board = Main.getBoard();
+        Square[] squares = board.getRow(row);
+        colorLineGreen(squares);
+    }
+
+    private void colorColumnGreen(int column) {
+        Board board = Main.getBoard();
+        Square[] squares = board.getColumn(column);
+        colorLineGreen(squares);
+    }
+
+    private void colorLineGreen(Square[] squares) {
+        for (Square square : squares) {
+            square.setGreen(true);
+            if (square.isBlack() || square.isUserSelected()) {
+                square.setStyle(Enums.SquareColor.DARK_GREEN);
+            } else {
+                square.setStyle(Enums.SquareColor.LIGHT_GREEN);
+            }
+        }
+    }
+
+    private void colorRow(int row) {
+        Board board = Main.getBoard();
+        for (int i = 0; i < board.getNumberOfColumns(); i++) {
+            Square square = board.getSquare(i, row);
+            if (!board.isColumnSolved(i)) {
+                colorSquare(square);
+            }
+        }
+    }
+
+    private void colorColumn(int column) {
+        Board board = Main.getBoard();
+        for (int i = 0; i < board.getNumberOfRows(); i++) {
+            Square square = board.getSquare(column, i);
+            if (!board.isRowSolved(i)) {
+                colorSquare(square);
+            }
+        }
+    }
+
+    private void colorSquare(Square square) {
+        square.setGreen(false);
+        if (square.isBlack()) {
+            square.setStyle(Enums.SquareColor.BLACK);
+        } else if (square.isUserSelected()) {
+            square.setStyle(Enums.SquareColor.DARK_GREY);
+        } else {
+            square.setStyle(Enums.SquareColor.WHITE);
+        }
     }
 }

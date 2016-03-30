@@ -95,13 +95,14 @@ public class PageLoader {
             Board board = new Board(boardSize, boardSize);
             board = board.randomFillBoard();
             createBoard(solvePage, board, controller);
+            controller.updateColumnsSolved();
+            controller.updateRowsSolved();
             board.notifyObservers();
             int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
             GridPane grid = (GridPane) solvePage.lookup("#boardPane");
             addRowLabels(boardSize, grid, cellSize);
             addColumnLabels(boardSize, grid, cellSize);
         }
-
     }
 
     @FXML
