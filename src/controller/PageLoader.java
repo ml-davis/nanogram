@@ -201,7 +201,7 @@ public class PageLoader {
         Main.getMenuBar().getMenus().get(1).getItems().add(Main.getSavedPuzzlesMenu());
     }
 
-    private void loadPuzzle(String puzzleName) {
+    public void loadPuzzle(String puzzleName) {
         FileManager fileManager = new FileManager();
         Board board = fileManager.getPuzzle(puzzleName);
         if (board != null) {

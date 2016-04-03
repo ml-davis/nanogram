@@ -33,7 +33,10 @@ public class SavePageController {
                 PageLoader.launchPromptWindow("Puzzle saved successfully");
                 PageLoader pageLoader = new PageLoader();
                 pageLoader.loadFrontPage();
-                Main.addSavedPuzzle(new MenuItem(name));
+                MenuItem item = new MenuItem(name);
+                final String finalName = name;
+                item.setOnAction(e -> pageLoader.loadPuzzle(finalName));
+                Main.addSavedPuzzle(item);
             } else {
                 PageLoader.launchPromptWindow("Sorry, we could not save your puzzle.");
             }
