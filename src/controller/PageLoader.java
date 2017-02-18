@@ -234,6 +234,14 @@ public class PageLoader {
         stage.showAndWait();
     }
 
+    public void toggleFullScreen() {
+		if (Main.getStage().isMaximized()) {
+			Main.getStage().setMaximized(false);
+		} else {
+			Main.getStage().setMaximized(true);
+		}
+	}
+
     private void createBoard(AnchorPane page, Board board, Observer boardPane) {
         board.attach(boardPane);
         GridPane grid = (GridPane) page.lookup("#boardPane");

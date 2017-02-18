@@ -27,7 +27,7 @@
         </Menu>
         <Menu text="Settings">
             <items>
-                <MenuItem text="Toggle Full Screen"/>
+                <MenuItem text="Toggle Full Screen" onAction="#toggleFullScreen"/>
             </items>
         </Menu>
     </menus>

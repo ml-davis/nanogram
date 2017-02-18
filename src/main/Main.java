@@ -22,6 +22,7 @@ import java.net.URL;
 
 public class Main extends Application {
 
+	private static Stage stage;
     private static BorderPane root = new BorderPane();
     private static Board board;
     private static MenuBar menuBar;
@@ -36,6 +37,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+    	stage = primaryStage;
 
         URL menuBarURL = getClass().getResource("../view/MenuBar.fxml");
         menuBar = FXMLLoader.load(menuBarURL);
@@ -60,6 +63,10 @@ public class Main extends Application {
 
         primaryStage.show();
     }
+
+    public static Stage getStage() {
+    	return stage;
+	}
 
     public static void addSavedPuzzle(MenuItem item) {
         savedPuzzlesMenu.getItems().add(item);
