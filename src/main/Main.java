@@ -1,7 +1,6 @@
 package main;
 
 import controller.PageLoader;
-import helpers.FileManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
