@@ -2,7 +2,11 @@ package main;
 
 import controller.PageLoader;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Orientation;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -10,6 +14,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.Board;
 
@@ -21,6 +26,9 @@ public class Main extends Application {
     private static Board board;
     private static MenuBar menuBar;
     private static Menu savedPuzzlesMenu;
+
+    private static int width;
+    private static int height;
 
     public static void main(String[] args) {
         launch(args);
@@ -38,7 +46,12 @@ public class Main extends Application {
         AnchorPane frontPage = FXMLLoader.load(frontPageURL);
         root.setCenter(frontPage);
 
-        Scene myScene = new Scene(root, 1366, 722);
+        // Determine users screen size
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        width = (int) (primaryScreenBounds.getMaxX() * 0.95);
+        height = (int) (primaryScreenBounds.getMaxY() * 0.95);
+
+        Scene myScene = new Scene(root, width, height);
         myScene.getStylesheets().add(getClass().getResource("../style/Style.css").toExternalForm());
         primaryStage.setScene(myScene);
 
@@ -80,4 +93,12 @@ public class Main extends Application {
         PageLoader loader = new PageLoader();
         loader.addSavedPuzzlesToMenuBar();
     }
+
+    public static int getWidth() {
+    	return width;
+	}
+
+	public static int getHeight() {
+    	return height;
+	}
 }

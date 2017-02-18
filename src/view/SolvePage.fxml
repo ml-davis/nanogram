@@ -26,6 +26,7 @@
         </GridPane>
 
         <HBox spacing="10">
+            <padding><Insets top="25" right="25" bottom="25" left="25"/></padding>
             <Button text="Cancel" onAction="#loadFrontPage"/>
             <Button text="Verify" onAction="#verifyPuzzle"/>
             <Button text="Get Hint" onAction="#getHint"/>

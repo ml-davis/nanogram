@@ -2,26 +2,38 @@
     -fx-background-color: "#789EE9";
 }
 
+.scroll-pane > .viewport {
+   -fx-background-color: transparent;
+}
+
+.scroll-pane {
+   -fx-background-color: transparent;
+}
+
+.corner {
+    -fx-background-color: "#789EE9";
+}
+
 Text {
-    -fx-font-size: 14px;
+    -fx-font-size: 1.75em;
     -fx-font-weight: bold;
     -fx-fill: #333333;
     -fx-effect: dropshadow(three-pass-box, rgba(225,225,225,0.5), 1, 1, 1, 1);
 }
 
 #title {
-    -fx-font-size: 28;
+    -fx-font-size: 2.25em;
     -fx-effect: dropshadow(three-pass-box, rgba(225,225,225,0.5), 1, 2, 2, 2);
 }
 
 #indicator {
-    -fx-font-size: 11;
+    -fx-font-size: 1.3em;
 }
 
 #lineLabel {
     -fx-text-fill: #333333;
     -fx-font-family: "Arial Narrow";
-    -fx-font-size: 10;
+    -fx-font-size: 10em;
     -fx-background-radius: 0, 0, 0;
     -fx-padding: 0;
     -fx-background-color: linear-gradient(#789EE9, #688ED9);
@@ -33,4 +45,5 @@ Text {
     -fx-font-weight: bold;
     -fx-background-color: linear-gradient(#636A71, #333333);
     -fx-effect: dropshadow(three-pass-box , rgba(0,0,0,0.6), 5, 0.0, 0, 1);
+    -fx-font-size: 1.5em;
 }

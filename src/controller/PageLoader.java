@@ -43,9 +43,10 @@ public class PageLoader {
             URL pageUrl = getClass().getResource(mapper.getPage(page));
             loadPage = FXMLLoader.load(pageUrl);
             BorderPane root = Main.getRoot();
-            root.setCenter(loadPage);
+			ScrollPane scrollPane = new ScrollPane(loadPage);
+            root.setCenter(scrollPane);
 
-        } catch (IOException e) {
+		} catch (IOException e) {
             System.out.println("Error navigating to " + page.toString());
         }
         return loadPage;
@@ -100,8 +101,8 @@ public class PageLoader {
             board.notifyObservers();
             int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
             GridPane grid = (GridPane) solvePage.lookup("#boardPane");
-            addRowLabels(board, grid, cellSize);
-            addColumnLabels(board, grid, cellSize);
+//            addRowLabels(board, grid, cellSize);
+//            addColumnLabels(board, grid, cellSize);
         }
     }
 
@@ -267,7 +268,7 @@ public class PageLoader {
         for (int i = 0; i < numberOfRows; i++) {
             hBox[i] = new HBox();
             hBox[i].setAlignment(Pos.CENTER_RIGHT);
-            hBox[i].setPrefWidth(130);
+            hBox[i].setPrefWidth(300);
             grid.add(hBox[i], 0, i + 1);
         }
         boardPane.setRowIndicators(hBox);
@@ -278,14 +279,17 @@ public class PageLoader {
         for (int i = 0; i < numberOfColumns; i++) {
             vBox[i] = new VBox();
             vBox[i].setAlignment(Pos.BOTTOM_CENTER);
-            vBox[i].setPrefHeight(130);
+            vBox[i].setPrefHeight(300);
             grid.add(vBox[i], i + 1, 0);
         }
         boardPane.setColumnIndicators(vBox);
     }
 
     private int getCellSize(int largestLine) {
-        return (int) ((-1.75)*largestLine + 50);
+        int minSize = 25;
+        int flexibleSize = (Main.getHeight() - 800) / largestLine;
+
+        return (flexibleSize > minSize) ? flexibleSize : minSize;
     }
 
     private int max(int a, int b) {
