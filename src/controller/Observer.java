@@ -11,12 +11,16 @@ import java.util.ArrayList;
 
 public abstract class Observer {
     protected Button[][] squares;
+    protected Button[] columnLabels;
+    protected Button[] rowLabels;
     protected VBox[] columnIndicators;
     protected HBox[] rowIndicators;
 
     public Observer(int numberOfRows, int numberOfColumns) {
         squares = new Button[numberOfRows][numberOfColumns];
-        columnIndicators = new VBox[numberOfRows];
+		columnLabels = new Button[numberOfColumns];
+		rowLabels = new Button[numberOfRows];
+		columnIndicators = new VBox[numberOfRows];
         rowIndicators = new HBox[numberOfColumns];
     }
 
@@ -24,6 +28,7 @@ public abstract class Observer {
         updateSquares();
         updateColumnIndicators();
         updateRowIndicators();
+        updateLabels();
     }
 
     public abstract void toggleCell(int column, int row);
@@ -39,6 +44,14 @@ public abstract class Observer {
     public void setRowIndicators(HBox[] hBox) {
         rowIndicators = hBox;
     }
+
+    public void setRowLabels(Button[] buttons) {
+    	rowLabels = buttons;
+	}
+
+	public void setColumnLabels(Button[] buttons) {
+		columnLabels = buttons;
+	}
 
     public void updateSquares() {
         Board board = Main.getBoard();
@@ -72,4 +85,22 @@ public abstract class Observer {
             }
         }
     }
+
+    public void updateLabels() {
+    	Board board = Main.getBoard();
+    	for (int i = 0; i < rowLabels.length; i++) {
+			if (board.isRowSolved(i)) {
+				rowLabels[i].setId("solvedLineLabel");
+			} else {
+				rowLabels[i].setId("lineLabel");
+			}
+		}
+		for (int j = 0; j < columnLabels.length; j++) {
+    		if (board.isColumnSolved(j)) {
+				columnLabels[j].setId("solvedLineLabel");
+			} else {
+				columnLabels[j].setId("lineLabel");
+			}
+		}
+	}
 }

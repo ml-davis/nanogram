@@ -56,8 +56,6 @@ public class Square implements Serializable {
             case BLACK: css += "-fx-background-color: black;"; break;
             case LIGHT_GREY: css += "-fx-background-color: #A6A6A6;"; break;
             case DARK_GREY: css += "-fx-background-color: #444444;"; break;
-            case LIGHT_GREEN: css += "-fx-background-color: #A0D79A;"; break;
-            case DARK_GREEN: css += "-fx-background-color: #0C5200;"; break;
         }
         this.style = css;
     }

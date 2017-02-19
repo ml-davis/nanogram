@@ -4,7 +4,6 @@ import helpers.Enums;
 import helpers.LetterMapper;
 import main.Main;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Board extends Observable implements Serializable {
@@ -13,6 +12,8 @@ public class Board extends Observable implements Serializable {
     private Square[][] board;
     private HashMap<Integer, ArrayList<Integer>> rowIndicator;
     private HashMap<Integer, ArrayList<Integer>> columnIndicator;
+    private boolean[] rowSolved;
+    private boolean[] columnSolved;
 
     public Board(int numberOfColumns, int numberOfRows) {
         this.numberOfColumns = numberOfColumns;
@@ -32,7 +33,10 @@ public class Board extends Observable implements Serializable {
         for (int i = 0; i < numberOfColumns; i++) {
             columnIndicator.put(i, new ArrayList<>(numberOfRows));
         }
-    }
+
+		rowSolved = new boolean[numberOfRows];
+		columnSolved = new boolean[numberOfRows];
+	}
 
     public void toggleFlag(int column, int row) {
         board[row][column].toggleFlag();
@@ -115,14 +119,26 @@ public class Board extends Observable implements Serializable {
         ArrayList<Integer> userIndicator = createUserIndicatorList(getRow(row));
         ArrayList<Integer> solutionIndicator = Main.getBoard().getRowIndicator(row);
 
-        return userIndicator.equals(solutionIndicator);
+        if (userIndicator.equals(solutionIndicator)) {
+        	rowSolved[row] = true;
+		} else {
+        	rowSolved[row] = false;
+		}
+
+        return rowSolved[row];
     }
 
     public boolean isColumnSolved(int column) {
         ArrayList<Integer> userIndicator = createUserIndicatorList(getColumn(column));
         ArrayList<Integer> solutionIndicator = Main.getBoard().getColumnIndicator(column);
 
-        return userIndicator.equals(solutionIndicator);
+        if (userIndicator.equals(solutionIndicator)) {
+			columnSolved[column] = true;
+		} else {
+			columnSolved[column] = false;
+		}
+
+		return columnSolved[column];
     }
 
     public String getErrorMessage() {

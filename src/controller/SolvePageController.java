@@ -202,11 +202,11 @@ public class SolvePageController extends Observer {
     private void colorLineGreen(Square[] squares) {
         for (Square square : squares) {
             square.setGreen(true);
-            if (square.isBlack() || square.isUserSelected()) {
-                square.setStyle(Enums.SquareColor.DARK_GREEN);
-            } else {
-                square.setStyle(Enums.SquareColor.LIGHT_GREEN);
-            }
+//            if (square.isBlack() || square.isUserSelected()) {
+//                square.setStyle(Enums.SquareColor.DARK_GREEN);
+//            } else {
+//                square.setStyle(Enums.SquareColor.LIGHT_GREEN);
+//            }
         }
     }
 

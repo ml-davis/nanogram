@@ -98,11 +98,11 @@ public class PageLoader {
             createBoard(solvePage, board, controller);
             controller.updateColumnsSolved();
             controller.updateRowsSolved();
+			int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
+			GridPane grid = (GridPane) solvePage.lookup("#boardPane");
+			addRowLabels(board, grid, cellSize, controller);
+			addColumnLabels(board, grid, cellSize, controller);
             board.notifyObservers();
-            int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
-            GridPane grid = (GridPane) solvePage.lookup("#boardPane");
-//            addRowLabels(board, grid, cellSize);
-//            addColumnLabels(board, grid, cellSize);
         }
     }
 
@@ -114,9 +114,9 @@ public class PageLoader {
         GridPane grid = (GridPane) solvePage.lookup("#boardPane");
         controller.updateColumnsSolved();
         controller.updateRowsSolved();
+		addRowLabels(board, grid, cellSize, controller);
+		addColumnLabels(board, grid, cellSize, controller);
         board.notifyObservers();
-        addRowLabels(board, grid, cellSize);
-        addColumnLabels(board, grid, cellSize);
     }
 
     @FXML
@@ -134,41 +134,47 @@ public class PageLoader {
         }
     }
 
-    public void addRowLabels(Board board, GridPane grid, int cellSize) {
+    public void addRowLabels(Board board, GridPane grid, int cellSize, Observer boardPane) {
         SolvePageController controller = new SolvePageController(board.getNumberOfRows(), board.getNumberOfColumns());
+		Button rowButtons[] = new Button[board.getNumberOfRows()];
+
         for (int i = 0; i < board.getNumberOfRows(); i++) {
             HBox hBox = new HBox();
             hBox.setAlignment(Pos.CENTER_LEFT);
             char rowLetter = LetterMapper.mapToLetter(i + 1);
-            Button rowButton = new Button(Character.toString(rowLetter));
-            rowButton.setId("lineLabel");
-            rowButton.setPrefSize(cellSize * .6, cellSize);
-            final int finalI = i;
-            rowButton.setOnAction(e -> {
-                controller.rowButtonClicked(finalI);
+            rowButtons[i] = new Button(Character.toString(rowLetter));
+            rowButtons[i].setId("lineLabel");
+            rowButtons[i].setPrefSize(57, cellSize);
+			final int finalI = i;
+            rowButtons[i].setOnAction(e -> {
+//                controller.rowButtonClicked(finalI);
             });
-            hBox.getChildren().add(rowButton);
+            hBox.getChildren().add(rowButtons[i]);
             grid.add(hBox, board.getNumberOfRows() + 1, i + 1);
         }
+        boardPane.setRowLabels(rowButtons);
     }
 
-    public void addColumnLabels(Board board, GridPane grid, int cellSize) {
+    public void addColumnLabels(Board board, GridPane grid, int cellSize, Observer boardPane) {
         SolvePageController controller = new SolvePageController(board.getNumberOfRows(), board.getNumberOfColumns());
+        Button columnButton[] = new Button[board.getNumberOfColumns()];
+
         for (int i = 0; i < board.getNumberOfColumns(); i++) {
             VBox vBox = new VBox();
             vBox.setAlignment(Pos.TOP_CENTER);
             char rowLetter = LetterMapper.mapToLetter(i + 1);
-            Button columnButton = new Button(Character.toString(rowLetter));
-            columnButton.setId("lineLabel");
-            columnButton.setPrefSize(cellSize, cellSize * .6);
+            columnButton[i] = new Button(Character.toString(rowLetter));
+            columnButton[i].setId("lineLabel");
+            columnButton[i].setPrefSize(cellSize, 57);
             final int finalI = i;
-            columnButton.setOnAction(e -> {
-                controller.columnButtonClicked(finalI);
+            columnButton[i].setOnAction(e -> {
+//                controller.columnButtonClicked(finalI);
             });
-            vBox.getChildren().add(columnButton);
+            vBox.getChildren().add(columnButton[i]);
             grid.add(vBox, i + 1, board.getNumberOfColumns() + 1);
         }
-    }
+		boardPane.setColumnLabels(columnButton);
+	}
 
     @FXML
     public void verifyPuzzle() {
@@ -277,6 +283,7 @@ public class PageLoader {
             hBox[i] = new HBox();
             hBox[i].setAlignment(Pos.CENTER_RIGHT);
             hBox[i].setPrefWidth(300);
+            hBox[i].setPadding(new Insets(0, 10, 0, 0));
             grid.add(hBox[i], 0, i + 1);
         }
         boardPane.setRowIndicators(hBox);
