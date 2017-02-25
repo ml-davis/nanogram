@@ -133,7 +133,7 @@ public class Board extends Observable implements Serializable {
 
 		int index = 0;
 		for (Square square : r) {
-			line[index++] = square.isBlack();
+			line[index++] = square.isBlack() || square.isUserSelected();
 		}
 
 		ArrayList<ArrayList<Boolean>> possibilities =

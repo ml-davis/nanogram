@@ -246,6 +246,7 @@ public class PageLoader {
 
 		TextArea textArea = new TextArea();
 		textArea.setEditable(false);
+		textArea.setStyle("-fx-font-family: monospace; -fx-font-size: 1.5em");
 		textArea.setText(solutions);
 
         Button okButton = new Button("OK");
@@ -253,7 +254,7 @@ public class PageLoader {
 
         window.getChildren().addAll(label, textArea, okButton);
 
-        int width = 400, height = 400;
+        int width = 650, height = 400;
         Scene scene = new Scene(window, width, height);
 
         stage.initModality(Modality.APPLICATION_MODAL);

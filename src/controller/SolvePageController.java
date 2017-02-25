@@ -67,7 +67,7 @@ public class SolvePageController extends Observer {
 			String message2 = "";
 			for (ArrayList<Boolean> solution : solutions) {
 				for (Boolean item : solution) {
-					message2 += (item) ? "X" : "-";
+					message2 += (item) ? "X " : "- ";
 				}
 				message2 += "\n";
 			}
