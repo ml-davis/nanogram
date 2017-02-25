@@ -49,6 +49,7 @@ public class SavePageController {
         }
     }
 
+    // remove light grey attribute from squares
     private Board hideSquares(Board board) {
 		for (int i = 0; i < board.getNumberOfRows(); i++) {
 			for (int j = 0; j < board.getNumberOfColumns(); j++) {

@@ -78,5 +78,6 @@ public class SolvePageController extends Observer {
 
 	public void getHint() {
     	Board board = Main.getBoard();
+    	PageLoader.launchPromptWindow(board.getHint());
 	}
 }

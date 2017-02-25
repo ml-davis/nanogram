@@ -93,6 +93,27 @@ public class Board extends Observable implements Serializable {
         return this;
     }
 
+    public String getHint() {
+		Board board = Main.getBoard();
+
+		for (int i = 0; i < board.getNumberOfRows(); i++) {
+
+			// if only 1 possible solution in row and row isn't already solved
+    		if (getValidSolutions(i, true).size() == 1 && !board.isRowSolved(i)) {
+				return "Look in row " + LetterMapper.mapToLetter(i + 1);
+			}
+		}
+
+		// if only 1 possible solution in column and column isn't already solved
+		for (int i = 0; i < board.getNumberOfColumns(); i++) {
+			if (getValidSolutions(i, false).size() == 1 && !board.isColumnSolved(i)) {
+				return " Look in column " + LetterMapper.mapToLetter(i + 1);
+			}
+		}
+
+		return "No hint available";
+	}
+
     public ArrayList<ArrayList<Boolean>> getValidSolutions(int lineNumber, boolean isRow) {
 		ArrayList<ArrayList<Boolean>> validSolutions = new ArrayList<>();
 
