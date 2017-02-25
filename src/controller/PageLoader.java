@@ -343,10 +343,6 @@ public class PageLoader {
         } else if (event.getSource() == createTwenty || event.getSource() == solveTwenty) {
             System.out.println("Creating 20x20\n");
             return 20;
-        } else if (event.getSource() == createCustom) {
-            System.out.println("Opening custom board window\n");
-            // TODO implement custom board window
-            return -1;
         } else {
             System.out.println("Error determining board size.");
             System.out.println("Event source = " + event.getSource());

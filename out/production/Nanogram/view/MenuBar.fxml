@@ -9,7 +9,6 @@
                 <MenuItem text="Create 5x5 (easy)" fx:id="createFive" onAction="#loadCreatorPageOne"/>
                 <MenuItem text="Create 13x13 (medium)" fx:id="createThirteen" onAction="#loadCreatorPageOne"/>
                 <MenuItem text="Create 20x20 (hard)" fx:id="createTwenty" onAction="#loadCreatorPageOne"/>
-                <MenuItem text="Create Custom"/>
             </items>
         </Menu>
         <Menu text="Solve">
