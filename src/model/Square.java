@@ -8,8 +8,6 @@ public class Square implements Serializable {
     private boolean flagged;
     private boolean black;
     private boolean userSelected;
-    private boolean possible;
-    private boolean green;
     private String style;
 
     public Square() {
@@ -17,14 +15,6 @@ public class Square implements Serializable {
         black = false;
         userSelected = false;
         setStyle(Enums.SquareColor.WHITE);
-    }
-
-    public void setGreen(boolean green) {
-        this.green = green;
-    }
-
-    public boolean isGreen() {
-        return green;
     }
 
     public void toggleFlag() {
@@ -67,13 +57,5 @@ public class Square implements Serializable {
     public String getStateString() {
         String format = "%-10s%-10b%n%-10s%-10b%n%-10s%-10s%n%-10s%-10s%n";
         return String.format(format, "flagged", flagged, "black", black, "selected", userSelected, "style", style);
-    }
-
-    public void setPossible(boolean possible) {
-        this.possible = possible;
-    }
-
-    public boolean isPossible() {
-        return possible;
     }
 }

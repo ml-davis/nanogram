@@ -1,14 +1,8 @@
 package controller;
 
 import helpers.Enums;
-import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import main.Main;
 import model.Board;
-
-import java.util.ArrayList;
 
 public class CreatorOneController extends Observer {
 

@@ -96,8 +96,6 @@ public class PageLoader {
             Board board = new Board(boardSize, boardSize);
             board = board.randomFillBoard();
             createBoard(solvePage, board, controller);
-            controller.updateColumnsSolved();
-            controller.updateRowsSolved();
 			int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
 			GridPane grid = (GridPane) solvePage.lookup("#boardPane");
 			addRowLabels(board, grid, cellSize, controller);
@@ -112,8 +110,6 @@ public class PageLoader {
         createBoard(solvePage, board, controller);
         int cellSize = getCellSize(max(board.getNumberOfRows(), board.getNumberOfColumns()));
         GridPane grid = (GridPane) solvePage.lookup("#boardPane");
-        controller.updateColumnsSolved();
-        controller.updateRowsSolved();
 		addRowLabels(board, grid, cellSize, controller);
 		addColumnLabels(board, grid, cellSize, controller);
         board.notifyObservers();
@@ -147,7 +143,7 @@ public class PageLoader {
             rowButtons[i].setPrefSize(57, cellSize);
 			final int finalI = i;
             rowButtons[i].setOnAction(e -> {
-//                controller.rowButtonClicked(finalI);
+                controller.rowButtonClicked(finalI);
             });
             hBox.getChildren().add(rowButtons[i]);
             grid.add(hBox, board.getNumberOfRows() + 1, i + 1);
@@ -168,7 +164,7 @@ public class PageLoader {
             columnButton[i].setPrefSize(cellSize, 57);
             final int finalI = i;
             columnButton[i].setOnAction(e -> {
-//                controller.columnButtonClicked(finalI);
+                controller.columnButtonClicked(finalI);
             });
             vBox.getChildren().add(columnButton[i]);
             grid.add(vBox, i + 1, board.getNumberOfColumns() + 1);
@@ -233,6 +229,32 @@ public class PageLoader {
         window.getChildren().addAll(label, okButton);
 
         int width = 400, height = 200;
+        Scene scene = new Scene(window, width, height);
+
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setScene(scene);
+        stage.showAndWait();
+    }
+
+    public static void launchLineWindow(String message, String solutions) {
+        Stage stage = new Stage();
+        VBox window = new VBox();
+        window.setPadding(new Insets(25, 25, 25, 25));
+        window.setSpacing(25);
+        window.setAlignment(Pos.CENTER);
+
+        Label label = new Label(message);
+
+		TextArea textArea = new TextArea();
+		textArea.setEditable(false);
+		textArea.setText(solutions);
+
+        Button okButton = new Button("OK");
+        okButton.setOnAction(e -> stage.close());
+
+        window.getChildren().addAll(label, textArea, okButton);
+
+        int width = 400, height = 400;
         Scene scene = new Scene(window, width, height);
 
         stage.initModality(Modality.APPLICATION_MODAL);
