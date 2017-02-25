@@ -363,4 +363,8 @@ public class Board extends Observable implements Serializable {
     public Square getSquare(int column, int row) {
         return board[row][column];
     }
+
+	public Enums.SquareColor getColor(int column, int row) {
+		return board[row][column].getColor();
+	}
 }

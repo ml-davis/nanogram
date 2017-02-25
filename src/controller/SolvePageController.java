@@ -10,7 +10,7 @@ public class SolvePageController extends Observer {
 
     public SolvePageController(int numberOfRows, int numberOfColumns) {
         super(numberOfRows, numberOfColumns);
-    }
+	}
 
     @Override
     public void toggleCell(int column, int row) {
@@ -77,6 +77,6 @@ public class SolvePageController extends Observer {
 	}
 
 	public void getHint() {
-    	// TODO: implement this
+    	Board board = Main.getBoard();
 	}
 }

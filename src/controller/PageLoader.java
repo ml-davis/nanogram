@@ -211,7 +211,6 @@ public class PageLoader {
             Main.setBoard(board);
             loadSolvePage(board);
         }
-
     }
 
     public static void launchPromptWindow(String message) {

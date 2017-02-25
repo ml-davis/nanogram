@@ -10,11 +10,11 @@ import model.Board;
 import java.util.ArrayList;
 
 public abstract class Observer {
-    protected Button[][] squares;
-    protected Button[] columnLabels;
-    protected Button[] rowLabels;
-    protected VBox[] columnIndicators;
-    protected HBox[] rowIndicators;
+    private Button[][] squares;
+    private Button[] columnLabels;
+    private Button[] rowLabels;
+    private VBox[] columnIndicators;
+    private HBox[] rowIndicators;
 
     public Observer(int numberOfRows, int numberOfColumns) {
         squares = new Button[numberOfRows][numberOfColumns];
@@ -88,18 +88,20 @@ public abstract class Observer {
 
     public void updateLabels() {
     	Board board = Main.getBoard();
-    	for (int i = 0; i < rowLabels.length; i++) {
-			if (board.isRowSolved(i)) {
-				rowLabels[i].setId("solvedLineLabel");
-			} else {
-				rowLabels[i].setId("lineLabel");
+    	if (rowLabels[0] != null) {
+			for (int i = 0; i < rowLabels.length; i++) {
+				if (board.isRowSolved(i)) {
+					rowLabels[i].setId("solvedLineLabel");
+				} else {
+					rowLabels[i].setId("lineLabel");
+				}
 			}
-		}
-		for (int j = 0; j < columnLabels.length; j++) {
-    		if (board.isColumnSolved(j)) {
-				columnLabels[j].setId("solvedLineLabel");
-			} else {
-				columnLabels[j].setId("lineLabel");
+			for (int j = 0; j < columnLabels.length; j++) {
+				if (board.isColumnSolved(j)) {
+					columnLabels[j].setId("solvedLineLabel");
+				} else {
+					columnLabels[j].setId("lineLabel");
+				}
 			}
 		}
 	}

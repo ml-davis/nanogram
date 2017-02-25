@@ -1,5 +1,6 @@
 package controller;
 
+import helpers.Enums;
 import helpers.FileManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
@@ -29,6 +30,8 @@ public class SavePageController {
             name += " (" + board.getNumberOfRows() + " x " + board.getNumberOfColumns() + ")";
 
             FileManager fileManager = new FileManager();
+			board = hideSquares(board);
+
             if (fileManager.savePuzzle(board, name)) {
                 PageLoader.launchPromptWindow("Puzzle saved successfully");
                 PageLoader pageLoader = new PageLoader();
@@ -45,4 +48,15 @@ public class SavePageController {
             s.close();
         }
     }
+
+    private Board hideSquares(Board board) {
+		for (int i = 0; i < board.getNumberOfRows(); i++) {
+			for (int j = 0; j < board.getNumberOfColumns(); j++) {
+				if (board.getColor(i, j) == Enums.SquareColor.LIGHT_GREY) {
+					board.setStyle(i, j, Enums.SquareColor.WHITE);
+				}
+			}
+		}
+		return board;
+	}
 }

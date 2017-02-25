@@ -1,20 +1,26 @@
 package model;
 
 import java.io.Serializable;
+
+import helpers.ColorMapper;
 import helpers.Enums;
+
+import static helpers.Enums.SquareColor.WHITE;
 
 public class Square implements Serializable {
 
     private boolean flagged;
     private boolean black;
     private boolean userSelected;
+    private Enums.SquareColor color;
     private String style;
 
     public Square() {
         flagged = false;
         black = false;
         userSelected = false;
-        setStyle(Enums.SquareColor.WHITE);
+        color = WHITE;
+        setStyle(color);
     }
 
     public void toggleFlag() {
@@ -41,14 +47,15 @@ public class Square implements Serializable {
 
     public void setStyle(Enums.SquareColor color) {
         String css = "-fx-background-radius: 0, 0, 0; ";
-        switch (color) {
-            case WHITE: css += "-fx-background-color: white;"; break;
-            case BLACK: css += "-fx-background-color: black;"; break;
-            case LIGHT_GREY: css += "-fx-background-color: #A6A6A6;"; break;
-            case DARK_GREY: css += "-fx-background-color: #444444;"; break;
-        }
-        this.style = css;
+		ColorMapper c = new ColorMapper();
+		css += c.getColor(color);
+		this.color = color;
+		this.style = css;
     }
+
+    public Enums.SquareColor getColor() {
+		return color;
+	}
 
     public String getStyle() {
         return style;
